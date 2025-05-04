@@ -1,0 +1,42 @@
+.eLibraryDefaultPadding {
+    padding-top: 50px;
+    padding-bottom: 25px;
+  }
+  
+  .search-container {
+    position: relative;
+    width: 100%;
+    margin: 0 auto;
+  }
+  
+  .search-icon {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+    color: #888;
+    font-size: 16px;
+    pointer-events: none;
+  }
+
+  .post-item {
+    transition: all 0.4s ease-in-out;
+    border-radius: 6px;
+    padding: 10px;
+  }
+  
+  .post-item:hover {
+    background-color: #f9f9f9;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  .post-item img {
+    transition: transform 0.4s ease-in-out;
+  }
+  
+  .post-item:hover img {
+    transform: translateY(-2px);
+  }
+  
+  
