@@ -1,175 +1,120 @@
+/* General Body Styling */
 body {
   font-family: "Segoe UI", sans-serif;
   background-color: #f4f6f9;
+  margin: 0;
+  padding: 0;
 }
+
+/* Sidebar Styling */
 .sidebar {
-  height: 100vh;
-  background-color: #343a40;
-  color: white;
-  padding-top: 20px;
   position: fixed;
   top: 0;
   left: 0;
-  overflow-y: auto; /* Enable scrolling inside the sidebar */
-  z-index: 1000; /* Ensure the sidebar stays above other content */
+  width: 250px; /* Default width for larger screens */
+  height: 100%;
+  background-color: #343a40;
+  color: white;
+  z-index: 1000;
+  transition: transform 0.3s ease; /* Sliding effect */
+  transform: translateX(-100%); /* Initially hide the sidebar off-screen */
 }
 
+/* Sidebar when toggled to show */
+.sidebar.show {
+  transform: translateX(0); /* Slide the sidebar in */
+}
+
+/* Sidebar logo */
 .sidebar-logo {
-    width: 150px;
-    height: 100px;
-    object-fit: contain;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    transition: transform 0.3s ease-in-out;
-  }
-  
-  .sidebar-logo:hover {
-    transform: scale(1.05);
-  }
-/* Add some margin to the main content so it doesn’t overlap the sidebar */
-.content {
-  margin-left: 250px; /* Match the sidebar width */
-  padding: 20px;
+  width: 150px;
+  height: 100px;
+  margin-bottom: 5px;
+  object-fit: contain;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease-in-out;
 }
 
-/* Optional: style for smaller screens (mobile-first responsive design) */
-@media (max-width: 767px) {
-  .sidebar {
-    position: relative; /* Make the sidebar behave normally on smaller screens */
-    width: 100%;
-    height: auto;
-  }
-
-  .content {
-    margin-left: 0;
-  }
+.sidebar-logo:hover {
+  transform: scale(1.05);
 }
 
-.sidebar a {
+/* Sidebar Links */
+.sidebar .sidebar-link {
   color: #ccc;
-  display: block;
-  padding: 10px 20px;
+  padding: 10px 15px;
+  margin-bottom: 1px;
   text-decoration: none;
+  display: block;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
 }
-.sidebar a:hover {
-  background-color: #495057;
+
+.sidebar .sidebar-link:hover {
+  background-color: #3a3f44;
   color: white;
 }
 
-
-.header {
-  position: sticky;
-  top: 0;
-  z-index: 1030; /* Ensures it stays on top of other content */
-  background-color: #fff;
-  padding: 15px 30px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  border-bottom: 1px solid #dee2e6; /* subtle border for separation */
+/* Remove Bootstrap blue from active sidebar links */
+.sidebar .nav-link.active {
+  background-color: #495057 !important; /* Darker background */
+  color: white !important; /* White text */
 }
 
-.main {
-  padding: 30px;
+/* Main Content Area */
+.content {
+  transition: margin-left 0.3s ease; /* Smooth transition for content shifting */
+  padding: 5px;
+  padding-left: 20px; /* Space for the sidebar */
+  margin-left: 0; /* Initially no margin */
 }
-.card {
+
+/* Sidebar Toggle Button Styling (can be fixed or placed elsewhere) */
+.sidebar-toggle-btn {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1050;
+  background-color: #343a40;
+  color: white;
   border: none;
-  border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
-}
-
-.section-title {
-  margin-bottom: 20px;
-  border-left: 5px solid #007bff;
-  padding-left: 10px;
-  font-weight: 600;
-}
-
-.admin-tabs .nav-link {
-  font-weight: 600;
-  font-size: 16px;
-  color: #444;
-  border: none;
-  border-bottom: 3px solid transparent;
-  transition: all 0.3s ease;
-}
-
-.admin-tabs .nav-link:hover {
-  color: #007bff;
-}
-
-.admin-tabs .nav-link.active {
-  color: #007bff;
-  background-color: #f8f9fa;
-  border-bottom: 3px solid #007bff;
-}
-
-.tab-pane {
-  transition: opacity 0.4s ease-in-out;
-}
-
-.card {
-  border-radius: 12px;
-  border: 1px solid #ddd;
-}
-
-.resource-scroll-wrapper {
-  width: 100%;
-  overflow-x: auto;
-  padding: 10px 0;
-}
-
-#resourceCards {
-  scroll-behavior: smooth;
-  gap: 1rem;
-}
-
-.card-text {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  /* -webkit-line-clamp: 3; */
-  -webkit-box-orient: vertical;
-}
-
-.read-more {
-  color: #007bff;
+  padding: 10px;
   cursor: pointer;
+  border-radius: 4px;
+  font-size: 20px;
 }
 
-.modal-img {
-  width: 100%;
-  height: auto;
-  border-radius: 8px;
-}
-
+/* Optional: Hide toggle button on larger screens */
 @media (min-width: 768px) {
-  .modal-dialog {
-    max-width: 800px;
+  .sidebar-toggle-btn {
+    display: none; /* Button will not be visible on larger screens */
+  }
+
+  /* Sidebar is visible by default on screens 768px and up */
+  .sidebar {
+    transform: translateX(0); /* Sidebar is shown by default */
+  }
+
+  .content {
+    margin-left: 250px; /* Make room for the sidebar */
   }
 }
 
-.custom-header {
-  z-index: 1050; /* keeps it above sidebar and other elements */
-  border-bottom: 1px solid #e3e6f0;
-  transition: all 0.5s ease-in-out;
-}
-
-.custom-header h5 {
-  font-size: 1.2rem;
-  letter-spacing: 0.5px;
-}
-
-.custom-header {
-    animation: slideDown 0.5s ease-in-out;
+/* Optional: Mobile-first design for small screens */
+@media (max-width: 767px) {
+  /* Sidebar adjustment to start below header */
+  .sidebar {
+    top: 60px; /* Matches header height */
+    height: calc(
+      100% - 60px
+    ); /* Adjust height so it doesn't hide behind header */
+    width: 60vw; /* Half of the viewport width */
   }
-  
-  @keyframes slideDown {
-    from {
-      opacity: 0;
-      transform: translateY(-20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+
+  /* When sidebar is toggled, it should occupy half the width of the screen vertically */
+  .sidebar.show {
+    width: 60vw; /* Half of the viewport width */
+    height: 100vh; /* Full height */
   }
-  
+}

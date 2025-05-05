@@ -33,7 +33,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Poppins:400,500,600,700,800" rel="stylesheet">
-
 </head>
 
 <body>
@@ -142,7 +141,8 @@
                                 <li><a href="/projects/remote-education/">Remote Education and Learning</a></li>
                                 <li><a href="/projects/sq-improvement-program/">SQ Improvement Program</a></li>
                                 <li><a href="/projects/lightup-uganda/">Light Up Uganda Solar Solution</a></li>
-                                <li><a href="/projects/upskilling-for-inservice-teachers/">Digital Upskilling for Inservice
+                                <li><a href="/projects/upskilling-for-inservice-teachers/">Digital Upskilling for
+                                        Inservice
                                         Teachers</a></li>
                                 <li><a href="/projects/stem-education/">Stem Education</a></li>
                             </ul>
@@ -194,7 +194,7 @@
                         <div class="course-meta">
                             <!-- Search and Filter -->
                             <div class="search-container">
-                                <input type="text" class="form-control" placeholder="Search blogs..." />
+                                <input type="text" id="resourceSearchInput" class="form-control" placeholder="Search publications..." />
                                 <span class="search-icon"><i class="fas fa-search"></i></span>
                             </div>
                         </div>
@@ -204,58 +204,26 @@
                         <section class="tab-info py-5 bg-light">
                             <div class="tab-info">
                                 <!-- START: Post Item -->
-                                <div class="post-item d-flex flex-wrap align-items-start py-4 border-bottom">
-                                    <div class="d-flex flex-wrap align-items-center text-muted mb-2 small">
-                                        <span class="badge bg-primary me-2">Event</span>
-                                        <span class="me-3"><i class="fas fa-calendar-alt me-1"></i> Mar 28, 2025</span>
-                                        <span><i class="fas fa-user-circle me-1"></i> Admin</span>
-                                    </div>
-                                    <a href="">
-                                        <h3 class="fw-semibold mb-2">Digital Learning Conference for Teachers</h3>
-                                        <div class="post-img me-4" style="flex: 0 0 220px;">
-                                            <img src="../../assets/img/lmscover.jpeg" alt="Post Image"
-                                                class="img-fluid rounded"
-                                                style="height: 300px; object-fit: cover; width: 100%;">
-                                        </div>
-                                    </a>
-                                    <div class="post-content" style="flex: 1 1 auto;">
-                                        <p class="text-muted">An upcoming national event focused on teacher
-                                            training for digital transformation in education. Learn, network, and grow
-                                            your impact
-                                            <span>...</span><a href="#" class="">Continue Reading</a>
-                                        </p>
+                                <div id="publication-container"></div>
+                                <div id="pagination" class="my-4 text-center"></div>
+                                <!-- Start Read More Publication Modal -->
+                                <!-- Custom Modal -->
+                                <div id="readMoreModal" class="custom-modal">
+                                    <div class="custom-modal-content">
+                                        <span class="custom-modal-close" id="closeModal">&times;</span>
+                                        <h2 id="readMoreTitle"></h2>
+                                        <img id="readMoreImage" src="" alt="Image"
+                                            style="width: 100%; max-height: 300px; object-fit: cover;" />
+                                        <p><strong>Category:</strong> <span id="readMoreCategory"></span></p>
+                                        <p><strong>Author:</strong> <span id="readMoreAuthor"></span></p>
+                                        <p><strong>Date Posted:</strong> <span id="readMoreDate"></span></p>
+                                        <p id="readMoreSummary" style="text-align: justify;"></p>
                                     </div>
                                 </div>
-                                <!-- <br> -->
-                                <div class="post-item d-flex flex-wrap align-items-start py-4 border-bottom">
-                                    <div class="d-flex flex-wrap align-items-center text-muted mb-2 small">
-                                        <span class="badge bg-primary me-2">Event</span>
-                                        <span class="me-3"><i class="fas fa-calendar-alt me-1"></i> Mar 28, 2025</span>
-                                        <span><i class="fas fa-user-circle me-1"></i> Admin</span>
-                                    </div>
-                                    <a href="">
-                                        <h3 class="fw-semibold mb-2">Digital Learning Conference for Teachers</h3>
-                                        <div class="post-img me-4" style="flex: 0 0 220px;">
-                                            <img src="../../assets/img/aboutcover1.webp" alt="Post Image"
-                                                class="img-fluid rounded"
-                                                style="height: 300px; object-fit: cover; width: 100%;">
-                                        </div>
-                                    </a>
-                                    <div class="post-content" style="flex: 1 1 auto;">
-                                        <p class="text-muted mb-2">An upcoming national event focused on teacher
-                                            training for digital transformation in education. Learn, network, and grow
-                                            your impact
-                                            <span>...</span><a href="#" class="">Continue Reading</a>
-                                        </p>
-                                    </div>
-                                </div>
+                                <!-- End Read More Publication Modal -->
                                 <!-- END: Post Item -->
-
-                                <!-- Duplicate the above post block for other items -->
-
                             </div>
                         </section>
-
                         <!-- End Resources Section -->
                     </div>
                 </div>
@@ -267,17 +235,21 @@
                         <!-- Sidebar Item -->
                         <div class="sidebar-item course-info">
                             <div class="title">
-                                <h4>Features</h4>
+                                <h4>Publication Info</h4>
                             </div>
                             <ul>
-                                <li><i class="flaticon-translation"></i> Language <span
-                                        class="pull-right">English</span></li>
-                                <li><i class="flaticon-faculty-shield"></i> Books <span class="pull-right">23</span>
-                                </li>
-                                <li><i class="flaticon-film"></i> Views <span class="pull-right">517</span></li>
-                                <li><i class="flaticon-levels"></i> Level <span class="pull-right">beginner</span></li>
-                                <li><i class="flaticon-group-of-students"></i> Downloads <span
-                                        class="pull-right">136</span></li>
+                                <li><i class="flaticon-group-of-students"></i> Total Posts <span class="pull-right"
+                                        id="totalPosts"></span></li>
+                                <li><i class="flaticon-faculty-shield"></i> Top Author <span class="pull-right"
+                                        id="topAuthor"></span></li>
+                                <li><i class="flaticon-levels"></i> Top Category <span class="pull-right"
+                                        id="topCategory"></span></li>
+                                <li><i class="flaticon-film"></i> Avg Content Length <span class="pull-right"
+                                        id="averageContentLength"></span></li>
+                                <li><i class="flaticon-translation"></i> Latest Updated Post <span class="pull-right"
+                                        id="latestUpdatedPost"></span></li>
+                                <li><i class="flaticon-clock"></i> Last Post <span class="pull-right"
+                                        id="latestPost"></span></li>
                             </ul>
                         </div>
                         <!-- End Sidebar Item -->
@@ -289,14 +261,13 @@
                             </div>
                             <!-- Search and Filter -->
                             <div class="row mb-12">
-                                <div class="col-md-12 mb-2">
+                                <div class="col-md-12 mb-">
                                     <select class="form-control">
-                                        <option value="">Filter by Category</option>
-                                        <option>Article</option>
+                                        <option value="">Available Categories</option>
                                         <option>News</option>
+                                        <option>Article</option>
                                         <option>Event</option>
                                         <option>Report</option>
-                                        <option>Blog</option>
                                     </select>
                                 </div>
                             </div>
@@ -373,16 +344,20 @@
                                     <a href="/projects/ai-sound-pen/"><i class="ti-angle-right"></i>AI Talking Pen</a>
                                 </li>
                                 <li>
-                                    <a href="/projects/hybrid-classrooms/"><i class="ti-angle-right"></i>Hybrid Classrooms</a>
+                                    <a href="/projects/hybrid-classrooms/"><i class="ti-angle-right"></i>Hybrid
+                                        Classrooms</a>
                                 </li>
                                 <li>
-                                    <a href="/projects/parasports-uganda/"><i class="ti-angle-right"></i>Parasports Uganda</a>
+                                    <a href="/projects/parasports-uganda/"><i class="ti-angle-right"></i>Parasports
+                                        Uganda</a>
                                 </li>
                                 <li>
-                                    <a href="/projects/sq-improvement-program/"><i class="ti-angle-right"></i> SQ Program</a>
+                                    <a href="/projects/sq-improvement-program/"><i class="ti-angle-right"></i> SQ
+                                        Program</a>
                                 </li>
                                 <li>
-                                    <a href="/projects/stem-education/"><i class="ti-angle-right"></i> Stem Education</a>
+                                    <a href="/projects/stem-education/"><i class="ti-angle-right"></i> Stem
+                                        Education</a>
                                 </li>
                             </ul>
                         </div>
@@ -515,6 +490,7 @@
     <script src="../../assets/js/bootsnav.js"></script>
     <script src="../../assets/js/main.js"></script>
     <script src="../../assets/js/file.js"></script>
+    <script type="module" src="../js/displaypublications.js"></script>
 </body>
 
 </html>

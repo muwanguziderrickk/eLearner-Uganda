@@ -18,29 +18,42 @@
     <div class="container-fluid">
         <div class="row">
             <!-- Sidebar -->
-            <nav class="col-md-2 d-none d-md-block sidebar bg-whit border-end vh-100 position-fixed">
+            <nav class="sidebar position-fixed border-end vh-100 col-md-2">
                 <div class="text-center py-">
-                    <img src="../../assets/img/favico.png" alt="E-Learner Logo" class="sidebar-logo mb-">
-                    <!-- <h6 class="fw-bold">E-Learner Admin</h6> -->
+                    <img src="../../assets/img/favico.png" alt="E-Learner Logo" class="sidebar-logo mb-2">
                 </div>
-                <div class="d-flex flex-column px-3">
-                    <a href="#" class="py-2 sidebar-link"><i class="fas fa-user-cog me-2"></i> User
-                        Management</a>
-                    <a href="#" class="py-2 sidebar-link"><i class="fas fa-book me-2"></i> Resources</a>
-                    <a href="#" class="py-2 sidebar-link"><i class="fas fa-newspaper me-2"></i>
-                        Publications</a>
-                    <a href="#" class="py-2 sidebar-link"><i class="fas fa-calendar-alt me-2"></i> Events</a>
-                    <a href="#" class="py-2 sidebar-link"><i class="fas fa-cog me-2"></i> Settings</a>
+                <div class="nav flex-column nav-pills px-3" id="sidebarTab" role="tablist" aria-orientation="vertical">
+                    <a class="nav-link py-2 sidebar-link active" id="publications-tab" data-bs-toggle="tab"
+                        href="#publications" role="tab" aria-controls="publications" aria-selected="true">
+                        <i class="fas fa-newspaper me-2"></i> Publications
+                    </a>
+                    <a class="nav-link py-2 sidebar-link" id="resources-tab" data-bs-toggle="tab" href="#resources"
+                        role="tab" aria-controls="resources" aria-selected="false">
+                        <i class="fas fa-book me-2"></i> Resources
+                    </a>
+                    <a class="nav-link py-2 sidebar-link" id="events-tab" data-bs-toggle="tab" href="#events" role="tab"
+                        aria-controls="events" aria-selected="false">
+                        <i class="fas fa-calendar-alt me-2"></i> Events
+                    </a>
+                    <a class="nav-link py-2 sidebar-link" id="users-tab" data-bs-toggle="tab" href="#users" role="tab"
+                        aria-controls="users" aria-selected="false">
+                        <i class="fas fa-user-cog me-2"></i> User Management
+                    </a>
+                    <a class="nav-link py-2 sidebar-link" id="settings-tab" data-bs-toggle="tab" href="#settings"
+                        role="tab" aria-controls="settings" aria-selected="false">
+                        <i class="fas fa-cog me-2"></i> Settings
+                    </a>
                 </div>
             </nav>
 
 
             <!-- Main Content -->
-            <main class="col-md-10 ms-sm-auto col-lg-10 px-md-4">
+            <main class="content col-md-10 ms-sm-auto col-lg-10 px-md-4">
                 <!-- Header -->
                 <header
-                    class="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm px-4 py-3 custom-header">
+                    class="navbar navbar-expand-1 navbar-light bg-white sticky-top shadow-sm px-3 py-3">
                     <div class="container-fluid d-flex justify-content-between align-items-center">
+                        <button class="sidebar-toggle-btn" onclick="toggleSidebar()">☰</button>
                         <h5 class="mb-0 fw-bold text-primary">📊 Dashboard</h5>
                         <div class="d-flex align-items-center gap-2">
                             <span class="fw-medium text-dark">Admin</span>
@@ -48,7 +61,6 @@
                         </div>
                     </div>
                 </header>
-
 
                 <div class="container mt-4">
                     <ul class="nav nav-tabs admin-tabs mb-4" id="adminTab" role="tablist">
@@ -153,7 +165,7 @@
                                             <div class="modal-footer">
                                                 <button class="btn btn-secondary" id="cancelPublicationModal"
                                                     data-bs-dismiss="modal">Cancel</button>
-                                                <button class="btn btn-warning text-dark" type="submit">Save
+                                                <button class="btn btn-warning text-dark" type="submit" id="savePublication">Save
                                                     Publication</button>
                                             </div>
                                         </form>
@@ -243,8 +255,8 @@
                                                 <div class="mb-3">
                                                     <label class="form-label">Category</label>
                                                     <select id="resourceCategory" class="form-select" required>
-                                                        <option>Science</option>
                                                         <option>Technology</option>
+                                                        <option>Science</option>
                                                         <option>Engineering</option>
                                                         <option>Arts</option>
                                                         <option>Mathematics</option>
@@ -264,7 +276,7 @@
                                             <div class="modal-footer">
                                                 <button class="btn btn-secondary" id="cancelResourceModal"
                                                     data-bs-dismiss="modal">Cancel</button>
-                                                <button class="btn btn-success" type="submit">Save Resource</button>
+                                                <button class="btn btn-success" type="submit" id="saveResource">Save Resource</button>
                                             </div>
                                         </form>
                                     </div>
@@ -361,6 +373,36 @@
     <script type="module" src="./js/publications.js"></script>
     <script type="module" src="./js/resources.js"></script>
     <script type="module" src="./js/users.js"></script>
+    <script>
+        // Listen for tab changes (from either sidebar or top tabs)
+        document.addEventListener('shown.bs.tab', function (event) {
+            const targetTabId = event.target.getAttribute('data-bs-target') || event.target.getAttribute('href');
+
+            // Remove active class from all top tab buttons
+            document.querySelectorAll('.admin-tabs .nav-link').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Remove active class from all sidebar links
+            document.querySelectorAll('.sidebar-link').forEach(link => {
+                link.classList.remove('active');
+            });
+
+            // Add active class to matching top tab button
+            const topTab = document.querySelector(`.admin-tabs .nav-link[data-bs-target="${targetTabId}"]`);
+            if (topTab) topTab.classList.add('active');
+
+            // Add active class to matching sidebar link
+            const sidebarLink = document.querySelector(`.sidebar-link[href="${targetTabId}"]`);
+            if (sidebarLink) sidebarLink.classList.add('active');
+        });
+    </script>
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.toggle('show'); // Toggle the sidebar visibility on small screens
+        }
+    </script>
 </body>
 
 </html>

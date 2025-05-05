@@ -142,7 +142,8 @@
                                 <li><a href="/projects/remote-education/">Remote Education and Learning</a></li>
                                 <li><a href="/projects/sq-improvement-program/">SQ Improvement Program</a></li>
                                 <li><a href="/projects/lightup-uganda/">Light Up Uganda Solar Solution</a></li>
-                                <li><a href="/projects/upskilling-for-inservice-teachers/">Digital Upskilling for Inservice
+                                <li><a href="/projects/upskilling-for-inservice-teachers/">Digital Upskilling for
+                                        Inservice
                                         Teachers</a></li>
                                 <li><a href="/projects/stem-education/">Stem Education</a></li>
                             </ul>
@@ -194,55 +195,26 @@
                         <div class="course-meta">
                             <!-- Search and Filter -->
                             <div class="search-container">
-                                <input type="text" class="form-control" placeholder="Search books..." />
+                                <input type="text" class="form-control" id="resourceSearchInput"
+                                    placeholder="Search resources..." />
                                 <span class="search-icon"><i class="fas fa-search"></i></span>
                             </div>
                         </div>
-
 
                         <!-- Start Resources Section -->
                         <div class="tab-info py-5">
                             <!-- Book Cards -->
                             <div class="row">
                                 <!-- Book Item -->
-                                <div class="col-md-6 col-lg-4 mb-5">
-                                    <div class="card book-card h-100">
-                                        <div class="book-img-wrapper">
-                                            <img src="../../assets/img/lmscover.jpeg" class="card-img-top"
-                                                alt="Book Cover">
-                                        </div>
-                                        <div class="card-body">
-                                            <h5 class="book-title">Book Title Example</h5>
-                                            <p class="text-muted mb-1">Author <strong>Jane Doe</strong></p>
-                                            <span class="badge badge-info mb-2">Science</span>
-                                            <a href="#" class="btn btn-sm btn-outline">Read Online</a>
-                                            <div class="d-flex flex-column gap-2 mt-3">
-                                                <a href="#" class="btn btn-dark btn-sm">⬇️ Download</a>
-                                            </div>
-                                        </div>
+                                <div class="row" id="resourceContainer"></div>
+                                <div class="text-center mt-4">
+                                    <div class="d-inline-flex align-items-center gap-3">
+                                        <button class="btn btn-outline-secondary" id="prevPageBtn">Previous</button>
+                                        <span id="currentPage">Page 1</span>
+                                        <button class="btn btn-outline-secondary" id="nextPageBtn">Next</button>
                                     </div>
                                 </div>
-
-                                <div class="col-md-6 col-lg-4 mb-5">
-                                    <div class="card book-card h-100">
-                                        <div class="book-img-wrapper">
-                                            <img src="../../assets/img/security.jpg" class="card-img-top" alt="Book Cover">
-                                        </div>
-                                        <div class="card-body">
-                                            <h5 class="book-title">Book Title Example</h5>
-                                            <p class="text-muted mb-1">Author <strong>Jane Doe</strong></p>
-                                            <span class="badge badge-info mb-2">Science</span>
-                                            <a href="#" class="btn btn-sm btn-outline">Read Online</a>
-                                            <div class="d-flex flex-column gap-2 mt-3">
-                                                <!-- <a href="#" class="btn btn-read">📖 Read Now</a> -->
-                                                <a href="#" class="btn btn-dark btn-sm">⬇️ Download</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Repeat this card for more books -->
-                                <!-- ... -->
+                                <!-- Book Item -->
                             </div>
                         </div>
                         <!-- End Resources Section -->
@@ -256,17 +228,19 @@
                         <!-- Sidebar Item -->
                         <div class="sidebar-item course-info">
                             <div class="title">
-                                <h4>Features</h4>
+                                <h4>Publication Info</h4>
                             </div>
                             <ul>
-                                <li><i class="flaticon-translation"></i> Language <span
-                                        class="pull-right">English</span></li>
-                                <li><i class="flaticon-faculty-shield"></i> Books <span class="pull-right">23</span>
-                                </li>
-                                <li><i class="flaticon-film"></i> Views <span class="pull-right">517</span></li>
-                                <li><i class="flaticon-levels"></i> Level <span class="pull-right">beginner</span></li>
-                                <li><i class="flaticon-group-of-students"></i> Downloads <span
-                                        class="pull-right">136</span></li>
+                                <li><i class="flaticon-group-of-students"></i> Total Resources <span class="pull-right"
+                                        id="totalPosts"></span></li>
+                                <li><i class="flaticon-faculty-shield"></i> Top Author <span class="pull-right"
+                                        id="topAuthor"></span></li>
+                                <li><i class="flaticon-levels"></i> Top Category <span class="pull-right"
+                                        id="topCategory"></span></li>
+                                <li><i class="flaticon-film"></i> Latest Updated Post <span class="pull-right"
+                                        id="latestUpdatedPost"></span></li>
+                                <li><i class="flaticon-clock"></i> Last Post <span class="pull-right"
+                                        id="latestPost"></span></li>
                             </ul>
                         </div>
                         <!-- End Sidebar Item -->
@@ -280,12 +254,12 @@
                             <div class="row mb-12">
                                 <div class="col-md-12 mb-2">
                                     <select class="form-control">
-                                        <option value="">Filter by Category</option>
+                                        <option value="">Available Categories</option>
                                         <option>Science</option>
                                         <option>Technology</option>
+                                        <option>Engineering</option>
+                                        <option>Arts</option>
                                         <option>Mathematics</option>
-                                        <option>History</option>
-                                        <option>Fiction</option>
                                     </select>
                                 </div>
                             </div>
@@ -362,16 +336,20 @@
                                     <a href="/projects/ai-sound-pen/"><i class="ti-angle-right"></i>AI Talking Pen</a>
                                 </li>
                                 <li>
-                                    <a href="/projects/hybrid-classrooms/"><i class="ti-angle-right"></i>Hybrid Classrooms</a>
+                                    <a href="/projects/hybrid-classrooms/"><i class="ti-angle-right"></i>Hybrid
+                                        Classrooms</a>
                                 </li>
                                 <li>
-                                    <a href="/projects/parasports-uganda/"><i class="ti-angle-right"></i>Parasports Uganda</a>
+                                    <a href="/projects/parasports-uganda/"><i class="ti-angle-right"></i>Parasports
+                                        Uganda</a>
                                 </li>
                                 <li>
-                                    <a href="/projects/sq-improvement-program/"><i class="ti-angle-right"></i> SQ Program</a>
+                                    <a href="/projects/sq-improvement-program/"><i class="ti-angle-right"></i> SQ
+                                        Program</a>
                                 </li>
                                 <li>
-                                    <a href="/projects/stem-education/"><i class="ti-angle-right"></i> Stem Education</a>
+                                    <a href="/projects/stem-education/"><i class="ti-angle-right"></i> Stem
+                                        Education</a>
                                 </li>
                             </ul>
                         </div>
@@ -504,6 +482,7 @@
     <script src="../../assets/js/bootsnav.js"></script>
     <script src="../../assets/js/main.js"></script>
     <script src="../../assets/js/file.js"></script>
+    <script type="module" src="../js/displayresources.js"></script>
 </body>
 
 </html>

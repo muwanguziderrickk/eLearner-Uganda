@@ -36,6 +36,8 @@ const fileField = document.getElementById("resourceFile");
 const PAGE_SIZE = 6;
 let lastVisible = null;
 let fullList = [];
+let isSaving = false;
+let abortController = null;
 let totalPages = 0;
 let currentPage = 1;
 
@@ -44,21 +46,25 @@ function resetForm() {
   idField.value = "";
 }
 
-function validateFile(file, allowedTypes, maxSizeMB) {
+
+function validateFile(file, allowedTypes, maxSizeMB, fileTypeLabel = "File") {
   if (!allowedTypes.includes(file.type)) {
     return {
       valid: false,
-      message: "Invalid file type. Must be " + allowedTypes.join(", "),
+      message: `Invalid ${fileTypeLabel} type. Allowed: ${allowedTypes.join(", ")}`,
     };
   }
+
   if (file.size > maxSizeMB * 1024 * 1024) {
     return {
       valid: false,
-      message: `File size must be less than ${maxSizeMB}MB`,
+      message: `${fileTypeLabel} size must be less than ${maxSizeMB}MB.`,
     };
   }
+
   return { valid: true };
 }
+
 
 function showLoading() {
   const loader = document.getElementById("loadingSpinner");
@@ -72,6 +78,16 @@ function hideLoading() {
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
+  if (isSaving) return;
+
+  isSaving = true;
+  abortController = new AbortController();
+
+  const submitBtn = form.querySelector("#saveResource");
+  submitBtn.disabled = true;
+  const originalText = submitBtn.innerHTML;
+  submitBtn.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...`;
+
   showLoading();
 
   const id = idField.value || doc(collection(db, "resources")).id;
@@ -95,14 +111,15 @@ form.addEventListener("submit", async (e) => {
       const imageValidation = validateFile(
         image,
         ["image/jpeg", "image/png"],
-        5
-      );
+        5,
+        "Image"
+      );      
       if (!imageValidation.valid) {
         Swal.fire("Error", imageValidation.message, "error");
-        hideLoading();
         return;
       }
-      const imgRef = ref(storage, `resourceImages/${id}/${image.name}`);
+
+      const imgRef = ref(storage, `eLibraryAndBlog/resourceImages/${id}/${image.name}`);
       await uploadBytes(imgRef, image);
       imageURL = await getDownloadURL(imgRef);
 
@@ -119,14 +136,15 @@ form.addEventListener("submit", async (e) => {
           "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
           "application/vnd.ms-powerpoint",
         ],
-        5
-      );
+        50,
+        "Document"
+      );      
       if (!docValidation.valid) {
         Swal.fire("Error", docValidation.message, "error");
-        hideLoading();
         return;
       }
-      const fileRef = ref(storage, `resourceFiles/${id}/${docFile.name}`);
+
+      const fileRef = ref(storage, `eLibraryAndBlog/resourceFiles/${id}/${docFile.name}`);
       await uploadBytes(fileRef, docFile);
       fileURL = await getDownloadURL(fileRef);
 
@@ -153,12 +171,21 @@ form.addEventListener("submit", async (e) => {
     resourceModal.hide();
     resetForm();
   } catch (err) {
-    console.error("Upload error:", err);
-    Swal.fire("Error", "Error uploading. Check console.", "error");
+    if (err.name === "AbortError") {
+      console.log("Upload cancelled.");
+    } else {
+      console.error("Upload error:", err);
+      Swal.fire("Error", "Error uploading. Check console.", "error");
+    }
   } finally {
+    isSaving = false;
+    abortController = null;
     hideLoading();
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = originalText;
   }
 });
+
 
 async function fetchResources(reset = false) {
   showLoading();
@@ -207,7 +234,7 @@ function renderResources(list) {
         <div class="card shadow-sm mb-4">
             <div class="card-body">
                 <img class="w-100 mb-2" src="${
-                  r.imageURL || "../../assets/img/lms.jpg"
+                  r.imageURL || "../../assets/img/lmscover.png"
                 }" alt="Image" style="height: 100px; object-fit: cover;">
                 <h6 class="mb-2">${r.title}</h6>
                 <p class="mb-1"><strong>Category:</strong> ${r.category}</p>
@@ -216,10 +243,10 @@ function renderResources(list) {
                   r.dateCreated || r.dateModified
                 ).toLocaleDateString()}</p>
                 <div class="d-flex justify-content-between">
-                    <button class="btn btn-sm btn-outline-info edit" data-id="${
+                    <button class="btn btn-sm btn-outline-info editResource" data-id="${
                       r.id
                     }"><i class="fas fa-edit"></i> Edit</button>
-                    <button class="btn btn-sm btn-outline-danger delete" data-id="${
+                    <button class="btn btn-sm btn-outline-danger deleteResource" data-id="${
                       r.id
                     }"><i class="fas fa-trash-alt"></i> Delete</button>
                 </div>
@@ -240,7 +267,7 @@ function renderResources(list) {
 }
 
 function attachEditDeleteHandlers() {
-  container.querySelectorAll(".edit").forEach((btn) => {
+  container.querySelectorAll(".editResource").forEach((btn) => {
     btn.addEventListener("click", async () => {
       const id = btn.getAttribute("data-id");
       const snap = await getDoc(doc(db, "resources", id));
@@ -255,7 +282,7 @@ function attachEditDeleteHandlers() {
     });
   });
 
-  container.querySelectorAll(".delete").forEach((btn) => {
+  container.querySelectorAll(".deleteResource").forEach((btn) => {
     btn.addEventListener("click", async () => {
       const id = btn.getAttribute("data-id");
 
@@ -294,8 +321,26 @@ document.getElementById("cancelResourceModal").addEventListener("click", () => {
     document.getElementById("resourceModal")
   );
   modal.hide();
+  
+  // Clear hidden ID
+  idField.value = "";
+
+  // Abort any saving
+  if (isSaving && abortController) {
+    abortController.abort();  // Trigger AbortError
+  }
+
+  // Reset form
   document.getElementById("resourceForm").reset();
+
+  // Optional: also reset button and spinner if something broke mid-way
+  const submitBtn = form.querySelector("#submitBtn");
+  if (submitBtn) {
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = "Save Changes";
+  }
 });
+
 
 // Search Functionality
 searchInput.addEventListener("input", () => {
@@ -311,7 +356,6 @@ searchInput.addEventListener("input", () => {
   renderResources(filtered);
   updatePagination();
 });
-
 
 function updatePagination() {
   const maxPagesToShow = 4;
@@ -348,7 +392,6 @@ function updatePagination() {
       </div>
     `;
 }
-
 
 function changePage(direction) {
   if (direction === "next" && currentPage < totalPages) {
