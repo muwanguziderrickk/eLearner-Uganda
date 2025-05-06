@@ -15,6 +15,7 @@ import {
   uploadBytes,
   getDownloadURL,
   deleteObject,
+  getAuth
 } from "./firebase-config.js";
 
 // DOM Elements
@@ -40,6 +41,48 @@ let isSaving = false;
 let abortController = null;
 let totalPages = 0;
 let currentPage = 1;
+
+let currentUserRole = "User";
+let currentUserUid = null;
+
+// Fetch the current user's uid (from session manager/Firebase Authentication)
+function getCurrentUserUid() {
+  const user = getAuth().currentUser; // Assuming you're using Firebase Authentication
+  return user ? user.uid : null;
+}
+
+// Get user role from Firestore
+async function getUserRole(uid) {
+  try {
+    const userDocRef = doc(db, "users", uid);
+    const userSnap = await getDoc(userDocRef);
+    if (userSnap.exists()) {
+      const data = userSnap.data();
+      return data.role || "User"; // fallback to User
+    } else {
+      console.warn("User document not found");
+      return "User";
+    }
+  } catch (err) {
+    console.error("Error getting user role:", err);
+    return "User";
+  }
+}
+
+// Initialization logic for enabling edit/delete based on user roles
+async function init() {
+  getAuth().onAuthStateChanged(async (user) => {
+    if (user) {
+      currentUserUid = user.uid;
+      currentUserRole = await getUserRole(currentUserUid);
+      fetchResources(true); // safe to call here for
+    } else {
+      console.warn("No user logged in");
+      // Optionally show login prompt or hide publication list
+    }
+  });
+}
+
 
 function resetForm() {
   form.reset();
@@ -76,6 +119,7 @@ function hideLoading() {
 }
 
 
+// Add or Update Resource
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
   if (isSaving) return;
@@ -101,6 +145,7 @@ form.addEventListener("submit", async (e) => {
 
   let imageURL = null;
   let fileURL = null;
+  const uid = getCurrentUserUid(); // Get the uid of the current user
 
   const resourceRef = doc(db, "resources", id);
   const existingDoc = await getDoc(resourceRef);
@@ -159,6 +204,7 @@ form.addEventListener("submit", async (e) => {
       author,
       imageURL: imageURL || oldData.imageURL || "",
       fileURL: fileURL || oldData.fileURL || "",
+      uid, // Store the uid of the signed-in user
       dateModified: now,
     };
 
@@ -228,6 +274,8 @@ function renderResources(list) {
   const currentSlice = list.slice(start, end);
 
   currentSlice.forEach((r) => {
+    const canEditOrDelete = currentUserRole === "Admin" || (currentUserRole === "Manager" && currentUserUid === r.uid);  
+
     const card = document.createElement("div");
     card.className = "col-md-6 col-lg-4";
     card.innerHTML = `
@@ -242,21 +290,19 @@ function renderResources(list) {
                 <p class="text-muted small">Uploaded: ${new Date(
                   r.dateCreated || r.dateModified
                 ).toLocaleDateString()}</p>
+                ${canEditOrDelete ? `
                 <div class="d-flex justify-content-between">
-                    <button class="btn btn-sm btn-outline-info editResource" data-id="${
+                    <button class="btn btn-sm btn-outline-info editResource me-2" data-id="${
                       r.id
-                    }"><i class="fas fa-edit"></i> Edit</button>
+                    }"><i class="fas fa-edit"></i> Edit Resource</button>
                     <button class="btn btn-sm btn-outline-danger deleteResource" data-id="${
                       r.id
                     }"><i class="fas fa-trash-alt"></i> Delete</button>
-                </div>
+                </div>` : ""}
                 <div class="mt-2 d-flex justify-content-between">
                     <a href="${
-                      r.fileURL
-                    }" target="_blank" class="btn btn-sm btn-primary w-100 me-1"><i class="fas fa-eye"></i> Read</a>
-                    <a href="${
-                      r.fileURL
-                    }" download class="btn btn-sm btn-outline-secondary"><i class="fas fa-download"></i></a>
+                      r.fileURL || 'javascript:void(0)'
+                    }" target="_blank" class="btn btn-sm btn-primary w-100"><i class="fas fa-eye"></i> Read Online</a>
                 </div>
             </div>
         </div>`;
@@ -427,5 +473,7 @@ window.goToPage = function (pageNumber) {
   updatePagination();
 };
 
-// Initial load
-fetchResources(true);
+
+// Initial Fetch
+// Only call init() once DOM is ready
+document.addEventListener("DOMContentLoaded", init);

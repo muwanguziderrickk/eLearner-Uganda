@@ -4,7 +4,7 @@ import {
     getDocs,
     query,
     orderBy,
-  } from "../../admin/manage-resources/js/firebase-config.js";
+  } from "../../admin/js/firebase-config.js";
   
   // DOM references
   const resourceContainer = document.getElementById("resourceContainer");
@@ -53,13 +53,13 @@ import {
     resourceContainer.innerHTML = ""; // clear previous
   
     currentItems.forEach((res) => {
-      const card = document.createElement("div");
+      const card = document.createElement("article");
       card.className = "col-md-6 col-lg-4 mb-5";
       card.innerHTML = `
         <div class="card book-card h-100">
           <div class="book-img-wrapper">
             <img src="${res.imageURL || '../../assets/img/lmscover.png'}"
-                 class="card-img-top"
+                 class="card-img-top" loading="lazy"
                  alt="Book Cover">
           </div>
           <div class="card-body">
@@ -67,7 +67,7 @@ import {
             <p class="text-muted mb-1">Author <strong>${res.author || "Unknown"}</strong></p>
             <span class="badge badge-info mb-2">${res.category || "General"}</span>
             <div class="d-flex flex-column gap-2 mt-4">
-              <a href="${res.fileURL || '#'}" target="_blank" class="btn btn-dark btn-sm">⬇️ Read Online</a>
+              <a href="${res.fileURL || 'javascript:void(0)'}" target="_blank" class="btn btn-dark btn-sm">⬇️ Read Online</a>
             </div>
           </div>
         </div>

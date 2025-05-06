@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin Dashboard | E-Learner Uganda</title>
 
-    <link rel="stylesheet" href="./css/update-records.css">
+    <link rel="stylesheet" href="../css/update-records.css">
     <!-- Bootstrap & Font Awesome -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
@@ -15,394 +15,420 @@
 </head>
 
 <body>
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Sidebar -->
-            <nav class="sidebar position-fixed border-end vh-100 col-md-2">
-                <div class="text-center py-">
-                    <img src="../../assets/img/favico.png" alt="E-Learner Logo" class="sidebar-logo mb-2">
-                </div>
-                <div class="nav flex-column nav-pills px-3" id="sidebarTab" role="tablist" aria-orientation="vertical">
-                    <a class="nav-link py-2 sidebar-link active" id="publications-tab" data-bs-toggle="tab"
-                        href="#publications" role="tab" aria-controls="publications" aria-selected="true">
-                        <i class="fas fa-newspaper me-2"></i> Publications
-                    </a>
-                    <a class="nav-link py-2 sidebar-link" id="resources-tab" data-bs-toggle="tab" href="#resources"
-                        role="tab" aria-controls="resources" aria-selected="false">
-                        <i class="fas fa-book me-2"></i> Resources
-                    </a>
-                    <a class="nav-link py-2 sidebar-link" id="events-tab" data-bs-toggle="tab" href="#events" role="tab"
-                        aria-controls="events" aria-selected="false">
-                        <i class="fas fa-calendar-alt me-2"></i> Events
-                    </a>
-                    <a class="nav-link py-2 sidebar-link" id="users-tab" data-bs-toggle="tab" href="#users" role="tab"
-                        aria-controls="users" aria-selected="false">
-                        <i class="fas fa-user-cog me-2"></i> User Management
-                    </a>
-                    <a class="nav-link py-2 sidebar-link" id="settings-tab" data-bs-toggle="tab" href="#settings"
-                        role="tab" aria-controls="settings" aria-selected="false">
-                        <i class="fas fa-cog me-2"></i> Settings
-                    </a>
-                </div>
-            </nav>
-
-
-            <!-- Main Content -->
-            <main class="content col-md-10 ms-sm-auto col-lg-10 px-md-4">
-                <!-- Header -->
-                <header
-                    class="navbar navbar-expand-1 navbar-light bg-white sticky-top shadow-sm px-3 py-3">
-                    <div class="container-fluid d-flex justify-content-between align-items-center">
-                        <button class="sidebar-toggle-btn" onclick="toggleSidebar()">☰</button>
-                        <h5 class="mb-0 fw-bold text-primary">📊 Dashboard</h5>
-                        <div class="d-flex align-items-center gap-2">
-                            <span class="fw-medium text-dark">Admin</span>
-                            <i class="fas fa-user-circle fa-2x text-secondary"></i>
-                        </div>
+    <!-- HTML: Loading screen -->
+    <div id="loader"
+        style="position:fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:9999; display:flex; align-items:center; justify-content:center;">
+        <div class="spinner-border text-primary" role="status"></div>
+    </div>
+    <!-- Your actual app content -->
+    <div id="main-content" style="display:none;">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- Sidebar -->
+                <nav class="sidebar position-fixed border-end vh-100 col-md-2">
+                    <div class="text-center py-">
+                        <img src="../../assets/img/favico.png" alt="E-Learner Logo" class="sidebar-logo mb-2">
                     </div>
-                </header>
+                    <div class="nav flex-column nav-pills px-3" id="sidebarTab" role="tablist"
+                        aria-orientation="vertical">
+                        <a class="nav-link py-2 sidebar-link active" id="publications-tab" data-bs-toggle="tab"
+                            href="#publications" role="tab" aria-controls="publications" aria-selected="true">
+                            <i class="fas fa-newspaper me-2"></i> Publications
+                        </a>
+                        <a class="nav-link py-2 sidebar-link" id="resources-tab" data-bs-toggle="tab" href="#resources"
+                            role="tab" aria-controls="resources" aria-selected="false">
+                            <i class="fas fa-book me-2"></i> Resources
+                        </a>
+                        <a class="nav-link py-2 sidebar-link" id="events-tab" data-bs-toggle="tab" href="#events"
+                            role="tab" aria-controls="events" aria-selected="false">
+                            <i class="fas fa-calendar-alt me-2"></i> Events
+                        </a>
+                        <a class="nav-link py-2 sidebar-link admin-only" id="users-tab" data-bs-toggle="tab"
+                            href="#users" role="tab" style="display: none;" aria-controls="users" aria-selected="false">
+                            <i class="fas fa-user-cog me-2"></i> User Management
+                        </a>
+                        <a class="nav-link py-2 sidebar-link" id="settings-tab" data-bs-toggle="tab" href="#settings"
+                            role="tab" aria-controls="settings" aria-selected="false">
+                            <i class="fas fa-cog me-2"></i> Settings
+                        </a>
+                    </div>
+                </nav>
 
-                <div class="container mt-4">
-                    <ul class="nav nav-tabs admin-tabs mb-4" id="adminTab" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="publications-tab" data-bs-toggle="tab"
-                                data-bs-target="#publications" type="button" role="tab">
-                                <i class="fas fa-newspaper"></i> Publications
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="resources-tab" data-bs-toggle="tab" data-bs-target="#resources"
-                                type="button" role="tab">
-                                <i class="fas fa-book"></i> Resources
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="users-tab" data-bs-toggle="tab" data-bs-target="#users"
-                                type="button" role="tab">
-                                <i class="fas fa-users"></i> Users
-                            </button>
-                        </li>
-                    </ul>
 
+                <!-- Main Content -->
+                <main class="content col-md-10 ms-sm-auto col-lg-10 px-md-4">
+                    <!-- Header -->
+                    <header class="navbar navbar-expand-1 navbar-light bg-white sticky-top shadow-sm px-3 py-3">
+                        <div class="container-fluid d-flex justify-content-between align-items-center">
+                            <button class="sidebar-toggle-btn" onclick="toggleSidebar()">☰</button>
+                            <h5 class="mb-0 fw-bold text-primary">📊 Dashboard</h5>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="fw-medium text-dark" id="greet"></span>
+                                <i class="fas fa-hand-paper fa-shake" style="color: orange;"></i>
+                                <nav class="navbar navbar-expand-lg bg-light px-3">
+                                    <div class="container-fluid justify-content-end">
+                                        <div class="dropdown">
+                                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                                                data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="fas fa-user-circle fa-2x text-secondary"></i>
+                                            </a>
 
-
-                    <div class="tab-content" id="adminTabContent">
-                        <div class="tab-pane fade show active" id="publications" role="tabpanel">
-                            <div class="card p-4 shadow-sm">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <h5 class="mb-0">Publications</h5>
-                                    <button class="btn btn-sm btn-success" data-bs-toggle="modal"
-                                        data-bs-target="#publicationModal">
-                                        <i class="fas fa-user-plus me-1"></i> Add Publication
-                                    </button>
-                                </div>
-                                <!-- Publications content goes here -->
-                                <section class="py-">
-                                    <div class="container">
-                                        <!-- Start Search Bar -->
-                                        <div class="mb-3">
-                                            <input type="text" class="form-control" id="searchInputPublications"
-                                                placeholder="Search by title, category, or author...">
+                                            <ul class="dropdown-menu dropdown-menu-end mt-2"
+                                                aria-labelledby="userDropdown" style="min-width: 180px;">
+                                                <li>
+                                                    <a class="dropdown-item text-danger" id="message" href="#"></a>
+                                                </li>
+                                                <li>
+                                                    <hr class="dropdown-divider">
+                                                </li>
+                                                <li>
+                                                    <button class="dropdown-item text-success" id="signoutbutton">
+                                                        Sign Out <i class="fas fa-sign-out-alt"></i>
+                                                    </button>
+                                                </li>
+                                            </ul>
                                         </div>
-                                        <!-- End Search Bar -->
-                                        <!-- Publications Tab Content -->
-                                        <div id="publicationsContainer" class="d-flex flex-column"></div>
-                                        <div id="loadingSpinner" class="text-center my-3" style="display: none;">
-                                            <div class="spinner-border text-primary" role="status">
-                                                <span class="visually-hidden">Loading...</span>
-                                            </div>
-                                        </div>
-                                        <ul class="pagination justify-content-center" id="paginationPublications"></ul>
                                     </div>
-                                </section>
-                                <!-- End Publications content -->
+                                </nav>
+                            </div>
+                        </div>
+                    </header>
 
-                                <!-- Start Publication Modal -->
-                                <div class="modal fade" id="publicationModal" tabindex="-1"
-                                    aria-labelledby="publicationModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog modal-lg">
-                                        <form class="modal-content" id="publicationsForm">
-                                            <div class="modal-header bg-warning">
-                                                <h5 class="modal-title" id="publicationModalLabel">Add/Edit Publication
-                                                </h5>
-                                                <button type="button" class="btn-close"
-                                                    data-bs-dismiss="modal"></button>
+
+                    <div class="container mt-4">
+                        <ul class="nav nav-tabs admin-tabs mb-4" id="adminTab" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="publications-tab" data-bs-toggle="tab"
+                                    data-bs-target="#publications" type="button" role="tab">
+                                    <i class="fas fa-newspaper"></i> Publications
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="resources-tab" data-bs-toggle="tab"
+                                    data-bs-target="#resources" type="button" role="tab">
+                                    <i class="fas fa-book"></i> Resources
+                                </button>
+                            </li>
+                            <li class="nav-item admin-only" role="presentation" style="display: none;">
+                                <button class="nav-link" id="users-tab" data-bs-toggle="tab" data-bs-target="#users"
+                                    type="button" role="tab">
+                                    <i class="fas fa-users"></i> Users
+                                </button>
+                            </li>
+                        </ul>
+
+
+
+                        <div class="tab-content" id="adminTabContent">
+                            <div class="tab-pane fade show active" id="publications" role="tabpanel">
+                                <div class="card p-4 shadow-sm">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h5 class="mb-0">Publications</h5>
+                                        <button class="btn btn-sm btn-success" data-bs-toggle="modal"
+                                            data-bs-target="#publicationModal">
+                                            <i class="fas fa-user-plus me-1"></i> Add Publication
+                                        </button>
+                                    </div>
+                                    <!-- Publications content goes here -->
+                                    <section class="py-">
+                                        <div class="container">
+                                            <!-- Start Search Bar -->
+                                            <div class="mb-3">
+                                                <input type="text" class="form-control" id="searchInputPublications"
+                                                    placeholder="Search by title, category, or author...">
                                             </div>
-                                            <div class="modal-body">
-                                                <input type="hidden" id="publicationId">
-                                                <div class="row">
-                                                    <div class="col-md-6 mb-3">
-                                                        <label class="form-label">Title:</label>
-                                                        <input type="text" class="form-control" id="publicationTitle"
+                                            <!-- End Search Bar -->
+                                            <!-- Publications Tab Content -->
+                                            <div id="publicationsContainer" class="d-flex flex-column"></div>
+                                            <div id="loadingSpinner" class="text-center my-3" style="display: none;">
+                                                <div class="spinner-border text-primary" role="status">
+                                                    <span class="visually-hidden">Loading...</span>
+                                                </div>
+                                            </div>
+                                            <ul class="pagination justify-content-center" id="paginationPublications">
+                                            </ul>
+                                        </div>
+                                    </section>
+                                    <!-- End Publications content -->
+
+                                    <!-- Start Publication Modal -->
+                                    <div class="modal fade" id="publicationModal" tabindex="-1"
+                                        aria-labelledby="publicationModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg">
+                                            <form class="modal-content" id="publicationsForm">
+                                                <div class="modal-header bg-warning">
+                                                    <h5 class="modal-title" id="publicationModalLabel">Add/Edit
+                                                        Publication
+                                                    </h5>
+                                                    <button type="button" class="btn-close"
+                                                        data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <input type="hidden" id="publicationId">
+                                                    <div class="row">
+                                                        <div class="col-md-6 mb-3">
+                                                            <label class="form-label">Title:</label>
+                                                            <input type="text" class="form-control"
+                                                                id="publicationTitle" required>
+                                                        </div>
+                                                        <div class="col-md-6 mb-3">
+                                                            <label class="form-label">Category:</label>
+                                                            <select id="publicationCategory" class="form-select"
+                                                                required>
+                                                                <option>News</option>
+                                                                <option>Article</option>
+                                                                <option>Event</option>
+                                                                <option>Report</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Image Upload:</label>
+                                                        <input type="file" class="form-control" id="publicationImage"
+                                                            accept="image/*">
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Author:</label>
+                                                        <input type="text" class="form-control" id="publicationAuthor"
                                                             required>
                                                     </div>
-                                                    <div class="col-md-6 mb-3">
-                                                        <label class="form-label">Category:</label>
-                                                        <select id="publicationCategory" class="form-select" required>
-                                                            <option>News</option>
-                                                            <option>Article</option>
-                                                            <option>Event</option>
-                                                            <option>Report</option>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Content:</label>
+                                                        <textarea class="form-control" id="publicationSummary" rows="3"
+                                                            required></textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button class="btn btn-secondary" id="cancelPublicationModal"
+                                                        data-bs-dismiss="modal">Cancel</button>
+                                                    <button class="btn btn-warning text-dark" type="submit"
+                                                        id="savePublication">Save
+                                                        Publication</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <!-- End Publication Modal -->
+
+                                    <!-- Start Read More Publication Modal -->
+                                    <div class="modal fade" id="readMoreModal" tabindex="-1"
+                                        aria-labelledby="readMoreModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="readMoreModalLabel">Publication Details
+                                                    </h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <img id="readMoreImage" src="" class="img-fluid mb-3"
+                                                        alt="Publication Image" />
+                                                    <h5 id="readMoreTitle"></h5>
+                                                    <p><strong>Category:</strong> <span id="readMoreCategory"></span>
+                                                    </p>
+                                                    <p><strong>Author:</strong> <span id="readMoreAuthor"></span></p>
+                                                    <p><strong>Last Modified:</strong> <span id="readMoreDate"></span>
+                                                    </p>
+                                                    <p id="readMoreSummary"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- End Read More Publication Modal -->
+                                </div>
+                            </div>
+
+
+
+                            <div class="tab-pane fade" id="resources" role="tabpanel">
+                                <div class="card p-4 shadow-sm">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h5 class="mb-0">Resources</h5>
+                                        <button class="btn btn-sm btn-success" data-bs-toggle="modal"
+                                            data-bs-target="#resourceModal">
+                                            <i class="fas fa-user-plus me-1"></i> Add Resource
+                                        </button>
+                                    </div>
+
+                                    <!-- Resource content goes here -->
+                                    <section class="py-">
+                                        <div class="container">
+                                            <!-- Start Search Bar -->
+                                            <div class="mb-3">
+                                                <input type="text" class="form-control" id="searchInput"
+                                                    placeholder="Search by title, category, or author...">
+                                            </div>
+                                            <!-- End Search Bar -->
+                                            <div class="row"></div>
+                                            <div id="paginationResources"></div>
+                                        </div>
+                                    </section>
+                                    <div id="loadingSpinner" class="text-center my-3" style="display: none;">
+                                        <div class="spinner-border text-primary" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                    </div>
+                                    <!-- Resource content goes here -->
+
+                                    <!-- Resource Modal -->
+                                    <div class="modal fade" id="resourceModal" tabindex="-1"
+                                        aria-labelledby="resourceModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <form class="modal-content" id="resourceForm" enctype="multipart/form-data">
+                                                <div class="modal-header bg-success text-white">
+                                                    <h5 class="modal-title" id="resourceModalLabel">Add/Edit Resource
+                                                    </h5>
+                                                    <button type="button" class="btn-close btn-close-white"
+                                                        data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <input type="hidden" id="resourceId">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">File Upload</label>
+                                                        <input type="file" class="form-control" id="resourceImage"
+                                                            accept=".jpg,.jpeg,.png">
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Title</label>
+                                                        <input type="text" class="form-control" id="resourceTitle"
+                                                            required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Category</label>
+                                                        <select id="resourceCategory" class="form-select" required>
+                                                            <option>Technology</option>
+                                                            <option>Science</option>
+                                                            <option>Engineering</option>
+                                                            <option>Arts</option>
+                                                            <option>Mathematics</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">File Upload</label>
+                                                        <input type="file" class="form-control" id="resourceFile"
+                                                            accept=".pdf,.epub">
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Author</label>
+                                                        <input type="text" class="form-control" id="resourceAuthor"
+                                                            required>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button class="btn btn-secondary" id="cancelResourceModal"
+                                                        data-bs-dismiss="modal">Cancel</button>
+                                                    <button class="btn btn-success" type="submit" id="saveResource">Save
+                                                        Resource</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+
+
+                            <div class="tab-pane fade admin-only" id="users" role="tabpanel" style="display: none;">
+                                <div class="card p-4 shadow-sm">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h5 class="mb-0">User Management</h5>
+                                        <button class="btn btn-sm btn-success" data-bs-toggle="modal"
+                                            data-bs-target="#userModal">
+                                            <i class="fas fa-user-plus me-1"></i> Add User
+                                        </button>
+                                    </div>
+
+                                    <!-- User content goes here -->
+                                    <div class="table-responsive">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Full Name</th>
+                                                    <th>Email</th>
+                                                    <th>Role</th>
+                                                    <th>Created</th>
+                                                    <th>Last Login</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="user-table-body"></tbody>
+                                        </table>
+                                    </div>
+                                    <!-- User Modal -->
+                                    <div class="modal fade" id="userModal" tabindex="-1"
+                                        aria-labelledby="userModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <form class="modal-content" id="userForm">
+                                                <div class="modal-header bg-primary text-white">
+                                                    <h5 class="modal-title" id="userModalLabel">Add/Edit User</h5>
+                                                    <button type="button" class="btn-close btn-close-white"
+                                                        data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <input type="hidden" id="userId">
+                                                    <div class="mb-3">
+                                                        <label for="userName" class="form-label">Full Name</label>
+                                                        <input type="text" class="form-control" id="userName" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="userEmail" class="form-label">Email</label>
+                                                        <input type="email" class="form-control" id="userEmail" required
+                                                            autocomplete="username">
+                                                    </div>
+                                                    <div id="passwordGroup">
+                                                        <label for="userPassword" class="form-label">Password</label>
+                                                        <input type="password" class="form-control" id="userPassword"
+                                                            required autocomplete="new-password">
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="userRole" class="form-label">Role</label>
+                                                        <select id="userRole" class="form-select" required>
+                                                            <option value="">Select Role</option>
+                                                            <option>Admin</option>
+                                                            <option>Manager</option>
                                                         </select>
                                                     </div>
                                                 </div>
-                                                <div class="mb-3">
-                                                    <label class="form-label">Image Upload:</label>
-                                                    <input type="file" class="form-control" id="publicationImage"
-                                                        accept="image/*">
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal" id="cancelUserModal">Cancel</button>
+                                                    <button class="btn btn-primary" type="submit" id="saveUserBtn">Save
+                                                        Changes</button>
                                                 </div>
-                                                <div class="mb-3">
-                                                    <label class="form-label">Author:</label>
-                                                    <input type="text" class="form-control" id="publicationAuthor"
-                                                        required>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label class="form-label">Content:</label>
-                                                    <textarea class="form-control" id="publicationSummary" rows="3"
-                                                        required></textarea>
-                                                </div>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button class="btn btn-secondary" id="cancelPublicationModal"
-                                                    data-bs-dismiss="modal">Cancel</button>
-                                                <button class="btn btn-warning text-dark" type="submit" id="savePublication">Save
-                                                    Publication</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                                <!-- End Publication Modal -->
-
-                                <!-- Start Read More Publication Modal -->
-                                <div class="modal fade" id="readMoreModal" tabindex="-1"
-                                    aria-labelledby="readMoreModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog modal-lg">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="readMoreModalLabel">Publication Details</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <img id="readMoreImage" src="" class="img-fluid mb-3"
-                                                    alt="Publication Image" />
-                                                <h5 id="readMoreTitle"></h5>
-                                                <p><strong>Category:</strong> <span id="readMoreCategory"></span></p>
-                                                <p><strong>Author:</strong> <span id="readMoreAuthor"></span></p>
-                                                <p><strong>Last Modified:</strong> <span id="readMoreDate"></span></p>
-                                                <p id="readMoreSummary"></p>
-                                            </div>
+                                            </form>
                                         </div>
                                     </div>
+
                                 </div>
-                                <!-- End Read More Publication Modal -->
-                            </div>
-                        </div>
-
-
-
-                        <div class="tab-pane fade" id="resources" role="tabpanel">
-                            <div class="card p-4 shadow-sm">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <h5 class="mb-0">Resources</h5>
-                                    <button class="btn btn-sm btn-success" data-bs-toggle="modal"
-                                        data-bs-target="#resourceModal">
-                                        <i class="fas fa-user-plus me-1"></i> Add Resource
-                                    </button>
-                                </div>
-
-                                <!-- Resource content goes here -->
-                                <section class="py-">
-                                    <div class="container">
-                                        <!-- Start Search Bar -->
-                                        <div class="mb-3">
-                                            <input type="text" class="form-control" id="searchInput"
-                                                placeholder="Search by title, category, or author...">
-                                        </div>
-                                        <!-- End Search Bar -->
-                                        <div class="row"></div>
-                                        <div id="paginationResources"></div>
-                                    </div>
-                                </section>
-                                <div id="loadingSpinner" class="text-center my-3" style="display: none;">
-                                    <div class="spinner-border text-primary" role="status">
-                                        <span class="visually-hidden">Loading...</span>
-                                    </div>
-                                </div>
-                                <!-- Resource content goes here -->
-
-                                <!-- Resource Modal -->
-                                <div class="modal fade" id="resourceModal" tabindex="-1"
-                                    aria-labelledby="resourceModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <form class="modal-content" id="resourceForm" enctype="multipart/form-data">
-                                            <div class="modal-header bg-success text-white">
-                                                <h5 class="modal-title" id="resourceModalLabel">Add/Edit Resource</h5>
-                                                <button type="button" class="btn-close btn-close-white"
-                                                    data-bs-dismiss="modal"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <input type="hidden" id="resourceId">
-                                                <div class="mb-3">
-                                                    <label class="form-label">File Upload</label>
-                                                    <input type="file" class="form-control" id="resourceImage"
-                                                        accept=".jpg,.jpeg,.png">
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label class="form-label">Title</label>
-                                                    <input type="text" class="form-control" id="resourceTitle" required>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label class="form-label">Category</label>
-                                                    <select id="resourceCategory" class="form-select" required>
-                                                        <option>Technology</option>
-                                                        <option>Science</option>
-                                                        <option>Engineering</option>
-                                                        <option>Arts</option>
-                                                        <option>Mathematics</option>
-                                                    </select>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label class="form-label">File Upload</label>
-                                                    <input type="file" class="form-control" id="resourceFile"
-                                                        accept=".pdf,.epub">
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label class="form-label">Author</label>
-                                                    <input type="text" class="form-control" id="resourceAuthor"
-                                                        required>
-                                                </div>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button class="btn btn-secondary" id="cancelResourceModal"
-                                                    data-bs-dismiss="modal">Cancel</button>
-                                                <button class="btn btn-success" type="submit" id="saveResource">Save Resource</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-
-
-
-                        <div class="tab-pane fade" id="users" role="tabpanel">
-                            <div class="card p-4 shadow-sm">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <h5 class="mb-0">User Management</h5>
-                                    <button class="btn btn-sm btn-success" data-bs-toggle="modal"
-                                        data-bs-target="#userModal">
-                                        <i class="fas fa-user-plus me-1"></i> Add User
-                                    </button>
-                                </div>
-
-                                <!-- User content goes here -->
-                                <div class="table-responsive">
-                                    <table class="table">
-                                        <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>Full Name</th>
-                                                <th>Email</th>
-                                                <th>Role</th>
-                                                <th>Created</th>
-                                                <th>Last Login</th>
-                                                <th>Actions</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="user-table-body"></tbody>
-                                    </table>
-                                </div>
-                                <!-- User Modal -->
-                                <div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="userModalLabel"
-                                    aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <form class="modal-content" id="userForm">
-                                            <div class="modal-header bg-primary text-white">
-                                                <h5 class="modal-title" id="userModalLabel">Add/Edit User</h5>
-                                                <button type="button" class="btn-close btn-close-white"
-                                                    data-bs-dismiss="modal"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <input type="hidden" id="userId">
-                                                <div class="mb-3">
-                                                    <label for="userName" class="form-label">Full Name</label>
-                                                    <input type="text" class="form-control" id="userName" required>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="userEmail" class="form-label">Email</label>
-                                                    <input type="email" class="form-control" id="userEmail" required>
-                                                </div>
-                                                <div id="passwordGroup">
-                                                    <label for="userPassword" class="form-label">Password</label>
-                                                    <input type="password" class="form-control" id="userPassword"
-                                                        required>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="userRole" class="form-label">Role</label>
-                                                    <select id="userRole" class="form-select" required>
-                                                        <option value="">Select Role</option>
-                                                        <option>Admin</option>
-                                                        <option>Manager</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
-                                                    id="cancelUserModal">Cancel</button>
-                                                <button class="btn btn-primary" type="submit">Save Changes</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-
                             </div>
                         </div>
                     </div>
-                </div>
 
-            </main>
+                </main>
+            </div>
         </div>
     </div>
 
 
-
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script type="module" src="./js/publications.js"></script>
-    <script type="module" src="./js/resources.js"></script>
-    <script type="module" src="./js/users.js"></script>
-    <script>
-        // Listen for tab changes (from either sidebar or top tabs)
-        document.addEventListener('shown.bs.tab', function (event) {
-            const targetTabId = event.target.getAttribute('data-bs-target') || event.target.getAttribute('href');
+    <script type="module" src="../js/publications.js"></script>
+    <script type="module" src="../js/resources.js"></script>
+    <script type="module" src="../js/users.js"></script>
+    <script src="../js/sidebarToggle_syncTabs.js"></script>
+    <!-- ...............Signout and sessionManager Logic............... -->
+    <script type="module" src="../js/sessionManger.js"></script>
+    <!-- ...............Signout and sessionManager Logic............... -->
 
-            // Remove active class from all top tab buttons
-            document.querySelectorAll('.admin-tabs .nav-link').forEach(tab => {
-                tab.classList.remove('active');
-            });
-
-            // Remove active class from all sidebar links
-            document.querySelectorAll('.sidebar-link').forEach(link => {
-                link.classList.remove('active');
-            });
-
-            // Add active class to matching top tab button
-            const topTab = document.querySelector(`.admin-tabs .nav-link[data-bs-target="${targetTabId}"]`);
-            if (topTab) topTab.classList.add('active');
-
-            // Add active class to matching sidebar link
-            const sidebarLink = document.querySelector(`.sidebar-link[href="${targetTabId}"]`);
-            if (sidebarLink) sidebarLink.classList.add('active');
-        });
-    </script>
-    <script>
-        function toggleSidebar() {
-            const sidebar = document.querySelector('.sidebar');
-            sidebar.classList.toggle('show'); // Toggle the sidebar visibility on small screens
-        }
-    </script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
 </body>
 
 </html>

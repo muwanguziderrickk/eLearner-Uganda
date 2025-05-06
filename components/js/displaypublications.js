@@ -6,7 +6,7 @@ import {
     doc,
     getDoc,
     getDocs,
-  } from "../../admin/manage-resources/js/firebase-config.js";
+  } from "../../admin/js/firebase-config.js";
 
   let currentPage = 1;
 const postsPerPage = 6;
@@ -48,7 +48,7 @@ let filteredPublications = [];
     const paginatedItems = publications.slice(startIndex, endIndex);
   
     paginatedItems.forEach((pub) => {
-      const post = document.createElement("div");
+      const post = document.createElement("article");
       post.className =
         "post-item d-flex flex-wrap align-items-start py-4 border-bottom";
       post.innerHTML = `
@@ -64,8 +64,8 @@ let filteredPublications = [];
           <a href="#" class="continue-reading" data-id="${pub.id}">
           <h3 class="fw-semibold mb-2">${pub.title}</h3>
           <div class="post-img me-4" style="flex: 0 0 220px;">
-            <img src="${pub.imageURL}" alt="Post Image"
-                 class="img-fluid rounded"
+            <img src="${pub.imageURL || "../../assets/img/digital skills 2.webp"}" alt="Post Image"
+                 class="img-fluid rounded" loading="lazy"
                  style="height: 300px; object-fit: cover; width: 100%;">
           </div>
           </a>
@@ -138,7 +138,7 @@ function renderPaginationControls(publications) {
   // Open modal
   function openReadMoreModal(pub) {
     readMoreTitle.textContent = pub.title || "";
-    readMoreImage.src = pub.imageURL || "placeholder.jpg";
+    readMoreImage.src = pub.imageURL || "../../assets/img/digital skills 2.webp";
     readMoreCategory.textContent = pub.category || "General";
     readMoreAuthor.textContent = pub.author || "Admin";
     readMoreDate.textContent = new Date(

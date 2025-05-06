@@ -1,7 +1,7 @@
 import {
   db,
   collection,
-  addDoc,
+  setDoc,
   updateDoc,
   deleteDoc,
   doc,
@@ -57,6 +57,11 @@ export async function loadUsers() {
 async function saveUser(e) {
   e.preventDefault();
 
+  const saveBtn = document.getElementById("saveUserBtn");
+  const originalBtnHTML = saveBtn.innerHTML;
+  saveBtn.disabled = true;
+  saveBtn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span> Saving...`;
+
   const id = document.getElementById("userId").value.trim();
   const fullName = document.getElementById("userName").value.trim();
   const email = document.getElementById("userEmail").value.trim();
@@ -65,6 +70,8 @@ async function saveUser(e) {
 
   if (!email || !fullName || !role) {
     Swal.fire("Missing info", "Name, email and role are required.", "warning");
+    saveBtn.disabled = false;
+    saveBtn.innerHTML = originalBtnHTML;
     return;
   }
 
@@ -80,24 +87,26 @@ async function saveUser(e) {
           "Password must be at least 6 characters.",
           "warning"
         );
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = originalBtnHTML;
         return;
       }
 
       const methods = await fetchSignInMethodsForEmail(auth, email);
       if (methods.length > 0) {
         Swal.fire("User Exists", "Email is already registered.", "info");
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = originalBtnHTML;
         return;
       }
 
       const cred = await createUserWithEmailAndPassword(auth, email, password);
-      await addDoc(usersColRef, {
+      await setDoc(doc(db, "users", cred.user.uid), {
         fullName,
         email,
         role,
-        status: "active",
         createdAt: new Date().toLocaleString(),
         lastLogin: "N/A",
-        uid: cred.user.uid,
       });
 
       Swal.fire("Added!", "User added successfully.", "success");
@@ -107,10 +116,14 @@ async function saveUser(e) {
       document.getElementById("userModal")
     );
     modal.hide();
+    resetUserForm();
     loadUsers();
   } catch (error) {
     console.error("Save error:", error);
     Swal.fire("Error", error.message, "error");
+  } finally {
+    saveBtn.disabled = false;
+    saveBtn.innerHTML = originalBtnHTML;
   }
 }
 
@@ -198,13 +211,13 @@ function resetUserForm() {
   document.getElementById("userId").value = "";
   document.getElementById("userEmail").disabled = false;
 
-  // Show password field and re-add 'required'
   const passwordGroup = document.getElementById("passwordGroup");
   const passwordInput = document.getElementById("userPassword");
 
   if (passwordGroup && passwordInput) {
-    passwordGroup.classList.remove("d-none"); // show
-    passwordInput.setAttribute("required", ""); // re-add required
+    passwordGroup.classList.remove("d-none");
+    passwordInput.setAttribute("required", "");
+    passwordInput.value = ""; // Ensure it clears
   }
 }
 

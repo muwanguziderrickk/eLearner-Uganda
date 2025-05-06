@@ -14,6 +14,7 @@
     <!-- ========== Favicon Icon ========== -->
     <link rel="shortcut icon" href="../assets/img/favic.png" type="image/x-icon">
 
+    <link rel="stylesheet" href="./contact-us.css">
     <!-- ========== Start Stylesheet ========== -->
     <link href="../assets/css/bootstrap.min.css" rel="stylesheet" />
     <link href="../assets/css/font-awesome.min.css" rel="stylesheet" />
@@ -33,6 +34,10 @@
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Poppins:400,500,600,700,800" rel="stylesheet">
 
+    <!-- Bootstrap 4 CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap 4 JS (includes Popper.js) -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.bundle.min.js"></script>
 </head>
 
 <body>
@@ -51,10 +56,13 @@
                     <div class="info">
                         <ul>
                             <li class="social">
-                                <a href="https://www.facebook.com/profile.php?id=61563891243190"><i class="fab fa-facebook-f"></i></a>
+                                <a href="https://www.facebook.com/profile.php?id=61563891243190"><i
+                                        class="fab fa-facebook-f"></i></a>
                                 <a href="www.tiktok.com/@elearner.uganda"><i class="fab fa-tiktok"></i></a>
-                                <a href="https://www.instagram.com/elearneruganda?igsh=em55eXAzbWFzZW12&utm_source=qr"><i class="fab fa-instagram"></i></a>
-                                <a href="https://youtube.com/@e-learneruganda?si=_cvLy3JjTobKoG0E"><i class="fab fa-youtube"></i></a>
+                                <a href="https://www.instagram.com/elearneruganda?igsh=em55eXAzbWFzZW12&utm_source=qr"><i
+                                        class="fab fa-instagram"></i></a>
+                                <a href="https://youtube.com/@e-learneruganda?si=_cvLy3JjTobKoG0E"><i
+                                        class="fab fa-youtube"></i></a>
                             </li>
                             <li>
                                 <i class="fas fa-user-shield"></i> Email: <strong>uganda.elearner@gmail.com
@@ -71,13 +79,13 @@
                 <div class="col-md-4 link text-right">
                     <ul>
                         <li>
-                            <a href="#">E-Library</a>
+                            <a href="/components/e-library/">E-Library</a>
                         </li>
                         <li>
-                            <a href="#">E-Shop</a>
+                            <a href="/404.html">E-Shop</a>
                         </li>
                     </ul>
-                </div> 
+                </div>
             </div>
         </div>
     </div>
@@ -93,7 +101,7 @@
                 <div class="attr-nav inc-btn">
                     <ul>
                         <li>
-                            <a href="javascript:void(0);">e-Learning Service Centre</a>
+                            <a href="/404.html">e-Learning Service Centre</a>
                         </li>
                 </div>
                 <!-- End Atribute Navigation -->
@@ -138,7 +146,8 @@
                                 <li><a href="/projects/remote-education/">Remote Education and Learning</a></li>
                                 <li><a href="/projects/sq-improvement-program/">SQ Improvement Program</a></li>
                                 <li><a href="/projects/lightup-uganda/">Light Up Uganda Solar Solution</a></li>
-                                <li><a href="/projects/upskilling-for-inservice-teachers/">Digital Upskilling for Inservice
+                                <li><a href="/projects/upskilling-for-inservice-teachers/">Digital Upskilling for
+                                        Inservice
                                         Teachers</a></li>
                                 <li><a href="/projects/stem-education/">Stem Education</a></li>
                             </ul>
@@ -191,8 +200,8 @@
                             </div>
                             <div class="info">
                                 <h4>Call Us</h4>
-                                <span>+256 702 725 303</span>  </br>
-                                <span>+256 780 566 688</span>  
+                                <span>+256 702 725 303</span> </br>
+                                <span>+256 780 566 688</span>
                             </div>
                         </div>
                     </div>
@@ -205,7 +214,7 @@
                                 <h4>Address</h4>
                                 <span>Kampala Legacy towers - Ministry of education & sports
                                     4th floor, P.O.Box 20042 Kyandodo road
-                                    </span>
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -239,101 +248,33 @@
                         <div class="heading">
                             <h4>Contact Us</h4>
                         </div>
-                        <form action="../assets/mail/contact.php" method="POST" class="contact-form">
-                            <div class="col-md-12">
-                                <div class="row">
-                                    <div class="form-group">
-                                        <input class="form-control" id="name" name="name" placeholder="Name"
-                                            type="text">
-                                        <span class="alert-error"></span>
-                                    </div>
-                                </div>
+                        <!-- Contact Us Form -->
+                        <form id="contactForm" class="contact-form">
+                            <div class="form-group">
+                                <input class="form-control" name="name" placeholder="Name" required />
                             </div>
-                            <div class="col-md-12">
-                                <div class="row">
-                                    <div class="form-group">
-                                        <input class="form-control" id="email" name="email" placeholder="Email*"
-                                            type="email">
-                                        <span class="alert-error"></span>
-                                    </div>
-                                </div>
+                            <div class="form-group">
+                                <input class="form-control" name="email" placeholder="Email" type="email" required />
                             </div>
-                            <div class="col-md-12">
-                                <div class="row">
-                                    <div class="form-group">
-                                        <input class="form-control" id="phone" name="phone" placeholder="Phone"
-                                            type="text">
-                                        <span class="alert-error"></span>
-                                    </div>
-                                </div>
+                            <div class="form-group">
+                                <input class="form-control" name="phone-contact" placeholder="Phone Number" required />
                             </div>
-                            <div class="col-md-12">
-                                <div class="row">
-                                    <div class="form-group comments">
-                                        <textarea class="form-control" id="comments" name="comments"
-                                            placeholder="Tell Me About Courses *"></textarea>
-                                    </div>
-                                </div>
+                            <div class="form-group">
+                                <textarea class="form-control" name="comments" placeholder="Your Message"
+                                    required></textarea>
                             </div>
-                            <div class="col-md-12">
-                                <div class="row">
-                                    <button type="submit" name="submit" id="submit">
-                                        Send Message <i class="fa fa-paper-plane"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <!-- Alert Message -->
-                            <div class="col-md-12 alert-notification">
-                                <div id="message" class="alert-msg"></div>
-                            </div>
+                            <button type="submit" class="btn btn-primary">Send Message</button>
                         </form>
+                        <!-- Toast container -->
+                        <div id="toast-container" style="position: fixed; top: 20px; right: 20px; z-index: 9999;"></div>
+                        <script src="./contact-us.js"></script>
                     </div>
                 </div>
                 <!-- End Maps & Contact Form -->
-
             </div>
-            
         </div>
     </div>
     <!-- End Contact Info -->
-
-    <!-- Start Newsletter 
-    ============================================= -->
-    <!-- <div class="newsletter-area fixed">
-        <div class="container">
-            <div class="subscribe-items shadow theme-hard default-padding bg-cover"
-                style="background-image: url(../assets/img/2440x1578.png);">
-                <div class="row">
-                    <div class="col-md-7 left-info">
-                        <div class="info-box">
-                            <div class="icon">
-                                <i class="flaticon-email"></i>
-                            </div>
-                            <div class="info">
-                                <h3>Subscribe to our newsletter</h3>
-                                <p>
-                                    Prospect humoured mistress to by proposal marianne attended. Simplicity the far
-                                    admiration preference everything.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-5">
-                        <form action="#">
-                            <div class="input-group">
-                                <input type="email" placeholder="Enter your e-mail here" class="form-control"
-                                    name="email">
-                                <button type="submit">
-                                    Subscribe <i class="fa fa-paper-plane"></i>
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div> -->
-    <!-- End Newsletter -->
 
     <!-- Start Footer 
     ============================================= -->
@@ -346,13 +287,18 @@
                         <div class="f-item about">
                             <h4>E-learner Uganda</h4>
                             <p>
-                                Formed in 2012, aimed to deliver education technology solutions in Uganda. At that time, the government lacked a clear ICT adoption approach for schools, and computers were largely absent.</p>
+                                Formed in 2012, aimed to deliver education technology solutions in Uganda. At that time,
+                                the government lacked a clear ICT adoption approach for schools, and computers were
+                                largely absent.</p>
                             <ul>
                                 <li>
-                                    <p>Email:<span><a href="mailto:uganda.elearner@gmail.com">uganda.elearner@gmail.com</a></span></p>
+                                    <p>Email:<span><a
+                                                href="mailto:uganda.elearner@gmail.com">uganda.elearner@gmail.com</a></span>
+                                    </p>
                                 </li>
                                 <li>
-                                    <p>Office:<span>Kampala Legacy towers - Ministry of education & sports 4th floor, P.O.Box 20042, Kyandodo road</span></p>
+                                    <p>Office:<span>Kampala Legacy towers - Ministry of education & sports 4th floor,
+                                            P.O.Box 20042, Kyandodo road</span></p>
                                 </li>
                             </ul>
                         </div>
@@ -365,13 +311,13 @@
                             <h4>Quick Links</h4>
                             <ul>
                                 <li>
-                                    <a href="/home/"><i class="ti-angle-right"></i>Home Page</a>
+                                    <a href="/components/e-library/"><i class="ti-angle-right"></i>E-Library</a>
                                 </li>
                                 <li>
-                                    <a href="javascript:void(0)"><i class="ti-angle-right"></i> E-Shop</a>
+                                    <a href="/404.html"><i class="ti-angle-right"></i> E-Shop</a>
                                 </li>
                                 <li>
-                                    <a href="blog-standard.html"><i class="ti-angle-right"></i>Events</a>
+                                    <a href="/components/blog/"><i class="ti-angle-right"></i>Publications</a>
                                 </li>
                                 <li>
                                     <a href="/about-us/"><i class="ti-angle-right"></i>About Us</a>
@@ -393,16 +339,20 @@
                                     <a href="/projects/ai-sound-pen/"><i class="ti-angle-right"></i>AI Talking Pen</a>
                                 </li>
                                 <li>
-                                    <a href="/projects/hybrid-classrooms/"><i class="ti-angle-right"></i>Hybrid Classrooms</a>
+                                    <a href="/projects/hybrid-classrooms/"><i class="ti-angle-right"></i>Hybrid
+                                        Classrooms</a>
                                 </li>
                                 <li>
-                                    <a href="/projects/parasports-uganda/"><i class="ti-angle-right"></i>Parasports Uganda</a>
+                                    <a href="/projects/parasports-uganda/"><i class="ti-angle-right"></i>Parasports
+                                        Uganda</a>
                                 </li>
                                 <li>
-                                    <a href="/projects/sq-improvement-program/"><i class="ti-angle-right"></i> SQ Program</a>
+                                    <a href="/projects/sq-improvement-program/"><i class="ti-angle-right"></i> SQ
+                                        Program</a>
                                 </li>
                                 <li>
-                                    <a href="/projects/stem-education/"><i class="ti-angle-right"></i> Stem Education</a>
+                                    <a href="/projects/stem-education/"><i class="ti-angle-right"></i> Stem
+                                        Education</a>
                                 </li>
                             </ul>
                         </div>
@@ -473,7 +423,7 @@
                                                 <i class="fas fa-star-half-alt"></i>
                                             </li>
                                             <li>Technological tools
-                                                </li>
+                                            </li>
                                         </ul>
                                     </div>
                                 </li>
@@ -489,7 +439,10 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-6">
-                        <p>&copy; Copyright <span id="year"></span><script>document.getElementById("year").textContent = new Date().getFullYear();</script> | All Rights Reserved by <a href="/home/">e-Learner Uganda</a></p>
+                        <p>&copy; Copyright <span id="year"></span>
+                            <script>document.getElementById("year").textContent = new Date().getFullYear();</script> |
+                            All Rights Reserved by <a href="/home/">e-Learner Uganda</a>
+                        </p>
                     </div>
                     <div class="col-md-6 text-right link">
                         <!-- <ul>
@@ -533,4 +486,5 @@
     <script src="../assets/js/main.js"></script>
     <script src="../assets/js/file.js"></script>
 </body>
+
 </html>

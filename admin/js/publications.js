@@ -17,6 +17,7 @@ import {
   uploadBytes,
   getDownloadURL,
   deleteObject,
+  getAuth,
 } from "./firebase-config.js";
 
 // DOM Elements
@@ -41,6 +42,48 @@ let fullList = [];
 let isSavingCancelled = false;
 let totalPages = 0;
 let currentPage = 1;
+
+let currentUserRole = "User";
+let currentUserUid = null;
+
+// Fetch the current user's uid (from session manager/Firebase Authentication)
+function getCurrentUserUid() {
+  const user = getAuth().currentUser; // Assuming you're using Firebase Authentication
+  return user ? user.uid : null;
+}
+
+// Get user role from Firestore
+async function getUserRole(uid) {
+  try {
+    const userDocRef = doc(db, "users", uid);
+    const userSnap = await getDoc(userDocRef);
+    if (userSnap.exists()) {
+      const data = userSnap.data();
+      return data.role || "User"; // fallback to User
+    } else {
+      console.warn("User document not found");
+      return "User";
+    }
+  } catch (err) {
+    console.error("Error getting user role:", err);
+    return "User";
+  }
+}
+
+// Initialization logic for enabling edit/delete based on user roles
+async function init() {
+  getAuth().onAuthStateChanged(async (user) => {
+    if (user) {
+      currentUserUid = user.uid;
+      currentUserRole = await getUserRole(currentUserUid);
+      fetchPublications(true); // safe to call here for
+    } else {
+      console.warn("No user logged in");
+      // Optionally show login prompt or hide publication list
+    }
+  });
+}
+
 
 // Short Summary
 function getShortSummary(text) {
@@ -121,38 +164,39 @@ function renderPublications(list) {
   const currentSlice = list.slice(start, start + PAGE_SIZE);
 
   currentSlice.forEach((p) => {
+    const canEditOrDelete = currentUserRole === "Admin" || (currentUserRole === "Manager" && currentUserUid === p.uid);  
+
     const item = document.createElement("div");
     item.className = "publication-ite d-flex mb-4 pb-3 border-bottom";
+
     item.innerHTML = `
-        <div class="flex-shrink-0 me-3">
-          <img src="${
-            p.imageURL || "../../assets/img/lms.jpg"
-          }" class="img-fluid rounded"
-            style="width: 120px; height: 100px; object-fit: cover;" />
+      <div class="flex-shrink-0 me-3">
+        <img src="${p.imageURL || "../../assets/img/digital skills 2.webp"}" class="img-fluid rounded"
+          style="width: 120px; height: 100px; object-fit: cover;" />
+      </div>
+      <div class="flex-grow-1">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <span class="badge bg-warning text-dark">${p.category}</span>
+          <small class="text-muted">Posted on ${new Date(
+            p.dateCreated?.toDate?.() || p.dateModified?.toDate?.()
+          ).toLocaleDateString()} by ${p.author}</small>
         </div>
-        <div class="flex-grow-1">
-          <div class="d-flex justify-content-between align-items-center mb-1">
-            <span class="badge bg-warning text-dark">${p.category}</span>
-            <small class="text-muted">Posted on ${new Date(
-              p.dateCreated?.toDate?.() || p.dateModified?.toDate?.()
-            ).toLocaleDateString()} by ${p.author}</small>
-          </div>
-          <h6 class="mb-2">${p.title}</h6>
-          <p class="text-muted small">${getShortSummary(p.summary)}</p>
-          <div class="d-flex justify-content-between">
-            <button class="btn btn-sm btn-outline-primary read-more-btn" data-id="${
-              p.id
-            }">Read More</button>
+        <h6 class="mb-2">${p.title}</h6>
+        <p class="text-muted small">${getShortSummary(p.summary)}</p>
+        <div class="d-flex justify-content-between">
+          <button class="btn btn-sm btn-outline-primary read-more-btn me-2" data-id="${p.id}">Read More...</button>
+          ${canEditOrDelete ? `
             <div>
-              <button class="btn btn-sm btn-outline-info editPublication" data-id="${
-                p.id
-              }"><i class="fas fa-edit"></i> Edit</button>
-              <button class="btn btn-sm btn-outline-danger deletePublication" data-id="${
-                p.id
-              }"><i class="fas fa-trash-alt"></i> Delete</button>
-            </div>
-          </div>
-        </div>`;
+              <button class="btn btn-sm btn-outline-info editPublication me-1" data-id="${p.id}">
+                <i class="fas fa-edit"></i> Edit Post
+              </button>
+              <button class="btn btn-sm btn-outline-danger deletePublication me-1" data-id="${p.id}">
+                <i class="fas fa-trash-alt"></i> Delete
+              </button>
+            </div>` : ""}
+        </div>
+      </div>`;
+    
     container.appendChild(item);
   });
 
@@ -167,7 +211,7 @@ function attachReadMoreHandlers() {
       if (snap.exists()) {
         const d = snap.data();
         readMoreTitle.textContent = d.title;
-        readMoreImage.src = d.imageURL || "placeholder.jpg";
+        readMoreImage.src = d.imageURL || "../../assets/img/digital skills 2.webp";
         readMoreCategory.textContent = d.category;
         readMoreAuthor.textContent = d.author;
         readMoreDate.textContent = new Date(
@@ -219,6 +263,7 @@ function updatePagination(filteredList) {
   });
 }
 
+
 // Add or Update Publication
 async function uploadImageToFirebaseStorage(file) {
   const imageRef = ref(
@@ -254,6 +299,7 @@ document
     const publicationId = document.getElementById("publicationId").value.trim();
 
     let imageURL = "";
+    const uid = getCurrentUserUid(); // Get the uid of the current user
 
     if (imageFile) {
       if (imageFile.size > 5 * 1024 * 1024) {
@@ -283,6 +329,7 @@ document
       category,
       imageURL,
       summary,
+      uid, // Store the uid of the signed-in user
       dateModified: serverTimestamp(),
     };
 
@@ -404,4 +451,5 @@ document.addEventListener("click", async (e) => {
 });
 
 // Initial Fetch
-document.addEventListener("DOMContentLoaded", fetchPublications);
+// Only call init() once DOM is ready
+document.addEventListener("DOMContentLoaded", init);

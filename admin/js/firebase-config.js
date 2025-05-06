@@ -12,16 +12,17 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-storage.js";
 
 import {
-  getAuth, createUserWithEmailAndPassword, fetchSignInMethodsForEmail
+  getAuth, createUserWithEmailAndPassword, fetchSignInMethodsForEmail, signInWithEmailAndPassword, onAuthStateChanged, signOut, sendPasswordResetEmail
 } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const storage = getStorage(app);
+const auth = getAuth(app);
 
 export {
   db, storage, collection, getDoc, getDocs, addDoc, updateDoc, deleteDoc,
   doc, ref, uploadBytes, getDownloadURL, deleteObject,
   setDoc, query, orderBy, limit, startAfter, serverTimestamp,
-  getAuth, createUserWithEmailAndPassword, fetchSignInMethodsForEmail
+  getAuth, createUserWithEmailAndPassword, fetchSignInMethodsForEmail, signInWithEmailAndPassword, onAuthStateChanged, signOut, sendPasswordResetEmail
 };
