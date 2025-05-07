@@ -16,45 +16,79 @@ const adminOnly = document.querySelectorAll(".admin-only");
 const managerOnly = document.querySelectorAll(".manager-only");
 
 // Toasts
-// Inject Signout Toast HTML into the DOM
-const injectSignoutToast = () => {
-  const toastHTML = `
-      <div class="toast-container position-fixed top-0 end-0 p-3">
-        <div id="signoutToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
-          <div class="d-flex">
-            <div class="toast-body">👋 You’ve been signed out successfully.</div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-          </div>
-        </div>
-      </div>
-    `;
-  document.body.insertAdjacentHTML("beforeend", toastHTML);
-};
-
-// Call it immediately so toast is ready
-injectSignoutToast();
-
-const signoutToast = new bootstrap.Toast(
-  document.getElementById("signoutToast")
+// Save message to display on the login page(redirect) after successful signout
+localStorage.setItem(
+  "postLogoutToast",
+  JSON.stringify({
+    message: "👋 You’ve been signed out successfully",
+    type: "success",
+  })
 );
+// Save message to display on the login page(redirect) after successful signout
 
 // sign out function
-let isSigningOut = false; // global flag
+let isSigningOut = false;
 
-const Signout = async () => {
-  try {
-    isSigningOut = true; // set flag to prevent redirect
-    await signOut(auth);
-    sessionStorage.clear();
-    signoutToast.show();
+document.addEventListener("DOMContentLoaded", () => {
+  const userIcon = document.getElementById("userIcon");
+  const userMenu = document.getElementById("customUserMenu");
+  const userMenuContent = document.getElementById("userMenuContent");
+  const signoutButton = document.getElementById("signoutbutton");
 
-    setTimeout(() => {
-      window.location.href = "/admin/";
-    }, 2500);
-  } catch (error) {
-    console.error("Sign-out failed:", error);
+  userIcon.addEventListener("click", (e) => {
+    e.preventDefault();
+    if (!isSigningOut) {
+      userMenu.classList.toggle("d-none");
+      document.body.classList.toggle("showing-user-menu");
+    }
+  });
+
+  // Prevent menu from closing if signing out
+  document.addEventListener("click", (e) => {
+    if (
+      !isSigningOut &&
+      !userMenu.contains(e.target) &&
+      !userIcon.contains(e.target)
+    ) {
+      userMenu.classList.add("d-none");
+      document.body.classList.remove("showing-user-menu");
+    }
+  });
+
+  async function Signout() {
+    if (isSigningOut) return;
+    isSigningOut = true;
+
+    userMenuContent.innerHTML = `
+      <div class="text-center">
+        <div class="spinner-border text-success" role="status"></div>
+        <p class="mt-2">Signing out...</p>
+      </div>
+    `;
+
+    try {
+      await signOut(auth); // Ensure Firebase Auth `auth` is already initialized
+      sessionStorage.clear();
+      setTimeout(() => {
+        window.location.href = "/admin/";
+      }, 2500);
+    } catch (error) {
+      console.error("Sign-out error:", error);
+      isSigningOut = false;
+      userMenuContent.innerHTML = `
+        <p class="text-danger">Failed to sign out! Try again.</p>
+        <button id="signoutbutton" class="btn btn-sm btn-success w-100 mt-2">
+          Try Again <i class="fas fa-sign-out-alt ms-1"></i>
+        </button>
+      `;
+      document
+        .getElementById("signoutbutton")
+        .addEventListener("click", Signout);
+    }
   }
-};
+
+  signoutButton.addEventListener("click", Signout);
+});
 
 // Check session and fetch user info from Firestore
 // JS: hide loader only when auth is verified
@@ -107,7 +141,7 @@ const CheckCredentials = async () => {
 };
 
 function updateUI(user, userInfo) {
-  if (MessageHead) MessageHead.innerText = `"${user.email}"`;
+  if (MessageHead) MessageHead.innerText = `${user.email}`;
   if (GreetHead) GreetHead.innerText = `Hi, ${userInfo.fullName}!`;
 
   if (userInfo.role === "Admin") {
@@ -124,10 +158,3 @@ function updateUI(user, userInfo) {
 
 // Start check
 CheckCredentials();
-
-// Signout button
-window.addEventListener("load", () => {
-  if (SignoutBtn) {
-    SignoutBtn.addEventListener("click", Signout);
-  }
-});
