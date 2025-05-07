@@ -61,9 +61,7 @@ loginForm.addEventListener("submit", async (event) => {
     );
     // Save message to display on the "/admin/manage-resources/"" page(redirect) after successful login
 
-    setTimeout(() => {
       window.location.href = "/admin/manage-resources/";
-    });
   } catch (error) {
     const errorMsg =
       error.message === "User not found"
@@ -106,8 +104,8 @@ loginForm.addEventListener("submit", async (event) => {
       toastEl.remove(); // Remove the toast from the DOM after it's hidden
     });
   } finally {
-    // loginBtn.disabled = false;
-    // loginBtn.innerHTML = "Login";
+    loginBtn.disabled = false;
+    loginBtn.innerHTML = "Login";
   }
 });
 
