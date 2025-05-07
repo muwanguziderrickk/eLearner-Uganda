@@ -1,0 +1,116 @@
+/* General Body Styling */
+body {
+  font-family: "Segoe UI", sans-serif;
+  background-color: #f4f6f9;
+  margin: 0;
+  padding: 0;
+}
+
+/* Sidebar logo */
+.sidebar-logo {
+  width: 150px;
+  height: 100px;
+  margin-bottom: 6px;
+  object-fit: contain;
+  border-radius: 12px;
+  transition: transform 0.3s ease-in-out;
+}
+
+.sidebar-logo:hover {
+  transform: scale(1.05);
+}
+
+/* Sidebar Links */
+.sidebar .sidebar-link {
+  color: #ccc;
+  padding: 10px 15px;
+  margin-bottom: 1px;
+  text-decoration: none;
+  display: block;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.sidebar .sidebar-link:hover {
+  background-color: #3a3f44;
+  color: white;
+}
+
+/* Remove Bootstrap blue from active sidebar links */
+.sidebar .nav-link.active {
+  background-color: #495057 !important; /* Darker background */
+  color: white !important; /* White text */
+}
+
+/* Sidebar Toggle Button Styling (can be fixed or placed elsewhere) */
+.sidebar-toggle-btn {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  z-index: 1050;
+  background-color: #343a40;
+  color: white;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+/* Hide toggle button on larger screens */
+@media (min-width: 992px) {
+  .sidebar-toggle-btn {
+    display: none; /* Button will not be visible on larger screens */
+  }
+
+  /* Sidebar is visible by default on screens 768px and up */
+  .sidebar {
+    background-color: #343a40;
+    color: white;
+    transform: translateX(0); /* Sidebar is shown by default */
+  }
+}
+
+/* Mobile-first design for small screens */
+@media (max-width: 991px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 60vw !important; /* ✅ Always 60vw */
+    height: 100vh;
+    background-color: #343a40;
+    color: white;
+    z-index: 1050;
+    transform: translateX(-100%); /* Start off-screen */
+    transition: transform 0.3s ease; /* Only animate transform */
+    will-change: transform; /* Optimization hint */
+  }
+
+  .sidebar.show {
+    transform: translateX(0); /* Slide in */
+  }
+
+  .content{
+    width: 100vh !important;
+  }
+
+  /* Enable the left space to close sidebar when clicked */
+  .backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5); /* semi-transparent black */
+    z-index: 1049; /* Just below the sidebar */
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  
+  .backdrop.show {
+    opacity: 1;
+    pointer-events: all;
+  }
+  
+}

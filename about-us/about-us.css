@@ -1,0 +1,66 @@
+/* CSS Style mainly for Objectives Section on the about us page */
+.objective-card {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    padding: 20px 20px;
+    transition: all 0.3s ease-in-out;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.objective-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+}
+
+.objective-icon {
+    height: 70px;
+    width: 70px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+    font-size: 28px;
+    color: #fff;
+}
+
+.bg-gradient-blue {
+    background: linear-gradient(135deg, #2a84ff, #54aaff);
+}
+
+.bg-gradient-green {
+    background: linear-gradient(135deg, #00b894, #00cec9);
+}
+
+.bg-gradient-orange {
+    background: linear-gradient(135deg, #ff7675, #fd9644);
+}
+
+.bg-gradient-purple {
+    background: linear-gradient(135deg, #a29bfe, #6c5ce7);
+}
+
+.bg-gradient-red {
+    background: linear-gradient(135deg, #e74c3c, #ff6b6b);
+}
+
+.bg-gradient-yellow {
+    background: linear-gradient(135deg, #feca57, #f6b93b);
+}
+
+.bg-gradient-gray {
+    background: linear-gradient(135deg, #636e72, #b2bec3);
+}
+
+.objective-card h4 {
+    font-weight: 600;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.objective-card p {
+    font-size: 15px;
+    color: #555;
+}

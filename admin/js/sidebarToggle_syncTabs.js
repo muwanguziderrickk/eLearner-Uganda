@@ -1,8 +1,12 @@
-// Toggle side bar
+// Toggle side bar and enable the left space to close sidebar when clicked
 function toggleSidebar() {
   const sidebar = document.querySelector(".sidebar");
+  const backdrop = document.querySelector(".backdrop");
+
   sidebar.classList.toggle("show"); // Toggle the sidebar visibility on small screens
+  backdrop.classList.toggle("show"); // Toggle the back drop visibility on small screens
 }
+
 
 // Listen for tab changes (from either sidebar or top tabs)
 document.addEventListener("shown.bs.tab", function (event) {
