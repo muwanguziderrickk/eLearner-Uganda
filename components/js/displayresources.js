@@ -60,7 +60,7 @@ import {
           <div class="book-img-wrapper">
             <img src="${res.imageURL || '../../assets/img/lmscover.png'}"
                  class="card-img-top" loading="lazy"
-                 alt="Book Cover">
+                 alt="${res.title} Image">
           </div>
           <div class="card-body">
             <h5 class="book-title">${res.title || "Untitled"}</h5>

@@ -39,8 +39,34 @@
     <link href="https://fonts.googleapis.com/css?family=Poppins:400,500,600,700,800" rel="stylesheet">
 
     <!-- Bootstrap JS & jQuery -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script> -->
+    <!-- <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script> -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script> -->
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <!-- Popper.js (required for tooltips, modals, etc.) -->
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <style>
+        .modal-pdf-body {
+            padding: 0;
+        }
+
+        .pdf-frame {
+            width: 100%;
+            height: 80vh;
+        }
+
+        @media (max-width: 767px) {
+            .pdf-frame {
+                height: 60vh;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -220,10 +246,8 @@
                                         as a driver for Digital
                                         economic growth.
                                     </p>
-                                    <!-- <a class="btn btn-dark effect btn-sm" href="/../assets/filesdownload/E-learner Company Profile.pdf" target="_blank"><i class="fas fa-angle-right"></i>Read More</a> -->
-                                    <a href="#" class="btn btn-dark effect btn-sm" data-toggle="modal"
-                                        data-target="#pdfModal"
-                                        data-pdf="/../assets/filesdownload/E-learner Company Profile.pdf">
+                                    <a href="/assets/filesdownload/E-learner Company Profile.pdf" class="btn btn-dark effect btn-sm preview-pdf-btn"
+                                        data-pdf="/assets/filesdownload/E-learner Company Profile.pdf">
                                         <i class="fas fa-angle-right"></i> Read More
                                     </a>
                                 </div>
@@ -236,7 +260,6 @@
                                         & the role of technology in
                                         education.
                                     </p>
-                                    <!-- <a class="btn btn-dark effect btn-sm" href="/about-us/"><i class="fas fa-angle-right"></i>Read More</a> -->
                                 </div>
                             </div>
                         </div>
@@ -330,9 +353,8 @@
                             (EduTech) solutions in schools and
                             teacher training facilities.
                         </p>
-                        <!-- <a href="/../assets/filesdownload/E-learner Company Profile.pdf" class="btn btn-dark border btn-md" target="_blank"> <i class="bi bi-download"></i> Company Profile</a> -->
-                        <a href="#" class="btn btn-dark border btn-md" data-toggle="modal" data-target="#pdfModal"
-                            data-pdf="/../assets/filesdownload/E-learner Company Profile.pdf">
+                        <a href="/assets/filesdownload/E-learner Company Profile.pdf" class="btn btn-dark border btn-sm preview-pdf-btn"
+                            data-pdf="/assets/filesdownload/E-learner Company Profile.pdf">
                             <i class="bi bi-eye"></i> Company Profile
                         </a>
                     </div>
@@ -362,9 +384,8 @@
                             to provide solutions customised for
                             Ugandan schools.
                         </p>
-                        <!-- <a href="/../assets/filesdownload/E-Learner Organisation Structure.pdf" class="btn btn-dark border btn-md" target="_blank"> <i class="bi bi-download"></i> Organisation Structure</a> -->
-                        <a href="#" class="btn btn-dark border btn-md" data-toggle="modal" data-target="#pdfModal"
-                            data-pdf="/../assets/filesdownload/E-Learner Organisation Structure.pdf">
+                        <a href="/assets/filesdownload/E-Learner Organisation Structure.pdf" class="btn btn-dark border btn-sm preview-pdf-btn"
+                            data-pdf="/assets/filesdownload/E-Learner Organisation Structure.pdf">
                             <i class="bi bi-eye"></i> Organisation Structure
                         </a>
                     </div>
@@ -383,19 +404,29 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body" style="height: 80vh;">
-                    <iframe id="pdfFrame" src="" style="width: 100%; height: 100%;" frameborder="0"></iframe>
+                <div class="modal-body modal-pdf-body">
+                    <iframe id="pdfFrame" src="" class="pdf-frame" frameborder="0"></iframe>
                 </div>
             </div>
         </div>
     </div>
     <script>
-        $('#pdfModal').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget)
-            var pdfUrl = button.data('pdf')
-            var modal = $(this)
-            modal.find('#pdfFrame').attr('src', pdfUrl)
-        })
+        $(document).on('click', '.preview-pdf-btn', function (e) {
+            e.preventDefault(); // Stop normal link behavior
+
+            const isMobile = window.innerWidth <= 768;
+            const pdfUrl = $(this).data('pdf');
+
+            if (isMobile) {
+                // Mobile: open PDF in a new tab
+                window.open(pdfUrl, '_blank');
+            } else {
+                // Desktop: show modal and set PDF
+                $('#pdfFrame').attr('src', '');
+                $('#pdfFrame').attr('src', pdfUrl);
+                $('#pdfModal').modal('show');
+            }
+        });
     </script>
     <!-- End Preview Modal Logic -->
     <!-- End Join us -->

@@ -61,10 +61,10 @@ let filteredPublications = [];
               pub.author || "Admin"
             }</span>
           </div>
-          <a href="#" class="continue-reading" data-id="${pub.id}">
+          <a href="${pub.id}" class="continue-reading" data-id="${pub.id}">
           <h3 class="fw-semibold mb-2">${pub.title}</h3>
           <div class="post-img me-4" style="flex: 0 0 220px;">
-            <img src="${pub.imageURL || "../../assets/img/digital skills 2.webp"}" alt="Post Image"
+            <img src="${pub.imageURL || "../../assets/img/digital skills 2.webp"}" alt="${pub.title} Image"
                  class="img-fluid rounded" loading="lazy"
                  style="height: 300px; object-fit: cover; width: 100%;">
           </div>
@@ -72,7 +72,7 @@ let filteredPublications = [];
           <div class="post-content" style="flex: 1 1 auto;">
             <p class="text-muted">
               ${getShortSummary(pub.summary)}
-              <a href="#" class="continue-reading" data-id="${pub.id}">Continue Reading</a>
+              <a href="${pub.id}" class="continue-reading" data-id="${pub.id}">Continue Reading</a>
             </p>
           </div>
         `;
