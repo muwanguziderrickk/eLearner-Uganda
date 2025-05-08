@@ -84,7 +84,7 @@ function updateUI(user, userInfo) {
 }
 
 function monitorUserActivity() {
-  const maxIdleTime = 15 * 60 * 1000; // 15 minutes
+  const maxIdleTime = 30 * 60 * 1000; // 15 minutes
   let idleTimeout;
   let hiddenSince = null;
 
@@ -139,7 +139,6 @@ localStorage.setItem(
     type: "success",
   })
 );
-// Save message to display on the login page(redirect) after successful signout
 
 // sign out function
 document.addEventListener("DOMContentLoaded", () => {
@@ -180,7 +179,7 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
 
     try {
-      await signOut(auth); // Ensure Firebase Auth `auth` is already initialized
+      await signOut(auth);
       sessionStorage.clear();
       setTimeout(() => {
         window.location.href = "/admin/";
