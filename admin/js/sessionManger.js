@@ -46,7 +46,7 @@ const CheckCredentials = async () => {
           updateUI(user, userInfo);
         } else {
           console.warn("No user data found in Firestore");
-          Signout();
+          signOut();
         }
       } catch (error) {
         console.error("Error fetching user info:", error);

@@ -219,7 +219,7 @@ function attachUserActions() {
       // Confirm and delete
       const confirm = await Swal.fire({
         title: "Delete user?",
-        text: "This will remove the user from Firestore only.",
+        text: "This will permanently remove the user from the system.",
         icon: "warning",
         showCancelButton: true,
         confirmButtonText: "Yes, delete",
