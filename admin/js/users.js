@@ -5,6 +5,7 @@ import {
   updateDoc,
   deleteDoc,
   doc,
+  onSnapshot,
   getDocs,
   getDoc,
 } from "./firebase-config.js";
@@ -18,44 +19,49 @@ import {
 const usersColRef = collection(db, "users");
 const auth = getAuth();
 
-export async function loadUsers() {
-  const snapshot = await getDocs(usersColRef);
+export function loadUsers() {
   const userTable = document.getElementById("user-table-body");
-  userTable.innerHTML = "";
-  let index = 1;
 
-  snapshot.forEach((docSnap) => {
-    const user = docSnap.data();
-    const row = document.createElement("tr");
-    const isProtected = user.protected === true;
+  // Listen for real-time updates
+  onSnapshot(usersColRef, (snapshot) => {
+    userTable.innerHTML = "";
+    let index = 1;
 
-    row.setAttribute("data-protected", isProtected); // for JS logic
-    row.innerHTML = `
-      <td>${index++}</td>
-      <td>${user.fullName}</td>
-      <td>${user.email}</td>
-      <td>${user.role}</td>
-      <td>${user.createdAt || "N/A"}</td>
-      <td>${user.lastLogin || "N/A"}</td>
-      ${
-        isProtected
-          ? `<td>🔒</td>`
-          : `
-      <td>
-        <button class="btn btn-sm btn-primary me-1 edit-user" data-id="${docSnap.id}">
-          <i class="fas fa-edit"></i>
-        </button>
-        <button class="btn btn-sm btn-danger delete-user" data-id="${docSnap.id}">
-          <i class="fas fa-trash"></i>
-        </button>
-      </td>`
-      }
-    `;
-    userTable.appendChild(row);
+    snapshot.forEach((docSnap) => {
+      const user = docSnap.data();
+      const row = document.createElement("tr");
+      const isProtected = user.protected === true;
+
+      row.setAttribute("data-protected", isProtected);
+      row.innerHTML = `
+        <td>${index++}</td>
+        <td>${user.fullName}</td>
+        <td>${user.email}</td>
+        <td>${user.role}</td>
+        <td>${user.createdAt || "N/A"}</td>
+        <td>${user.lastLogin || "N/A"}</td>
+        ${
+          isProtected
+            ? `<td>🔒</td>`
+            : `
+        <td>
+          <button class="btn btn-sm btn-primary me-1 edit-user" data-id="${docSnap.id}">
+            <i class="fas fa-edit"></i>
+          </button>
+          <button class="btn btn-sm btn-danger delete-user" data-id="${docSnap.id}">
+            <i class="fas fa-trash"></i>
+          </button>
+        </td>`
+        }
+      `;
+      userTable.appendChild(row);
+    });
+
+    attachUserActions();
   });
-  attachUserActions();
 }
 
+// Add or update user data
 async function saveUser(e) {
   e.preventDefault();
 

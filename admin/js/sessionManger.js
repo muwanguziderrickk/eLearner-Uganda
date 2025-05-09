@@ -1,4 +1,4 @@
-import { db, doc, getDoc } from "./firebase-config.js";
+import { db, doc, getDoc, onSnapshot } from "./firebase-config.js";
 import { getAuth, onAuthStateChanged, signOut } from "./firebase-config.js";
 
 const auth = getAuth();
@@ -11,8 +11,8 @@ window.addEventListener("offline", function (event) {
   alert("Network connection lost! Please check your internet connection.");
 });
 
-// Check session and fetch user info from Firestore
 // JS: hide loader only when auth is verified
+// Check session and fetch user info from Firestore in real-time
 const CheckCredentials = async () => {
   onAuthStateChanged(auth, async (user) => {
     const loader = document.getElementById("loader");
@@ -26,38 +26,47 @@ const CheckCredentials = async () => {
       return;
     }
 
-    const storedCreds = JSON.parse(sessionStorage.getItem("user-credentials"));
-    const storedInfo = JSON.parse(sessionStorage.getItem("user-information"));
+    const docRef = doc(db, "users", user.uid);
 
-    // If no session data or UID mismatch, fetch fresh data
-    if (!storedCreds || !storedInfo || storedCreds.uid !== user.uid) {
-      try {
-        const docRef = doc(db, "users", user.uid);
-        const docSnap = await getDoc(docRef);
-
+    // Listen for real-time updates to user document
+    const unsubscribe = onSnapshot(
+      docRef,
+      (docSnap) => {
         if (docSnap.exists()) {
           const userInfo = docSnap.data();
-          sessionStorage.setItem(
-            "user-credentials",
-            JSON.stringify({ email: user.email, uid: user.uid })
+
+          // Update session storage if changed
+          const currentSession = JSON.parse(
+            sessionStorage.getItem("user-information")
           );
-          sessionStorage.setItem("user-information", JSON.stringify(userInfo));
+          if (
+            !currentSession ||
+            JSON.stringify(currentSession) !== JSON.stringify(userInfo)
+          ) {
+            sessionStorage.setItem(
+              "user-credentials",
+              JSON.stringify({ email: user.email, uid: user.uid })
+            );
+            sessionStorage.setItem(
+              "user-information",
+              JSON.stringify(userInfo)
+            );
+          }
 
           updateUI(user, userInfo);
         } else {
-          console.warn("No user data found in Firestore");
-          signOut();
+          console.warn("No user data found");
+          signOut(auth);
         }
-      } catch (error) {
-        console.error("Error fetching user info:", error);
-        Swal.fire("Error", "Failed to fetch user info.", "error");
-      }
-    } else {
-      updateUI(user, storedInfo);
-    }
 
-    if (loader) loader.style.display = "none";
-    if (main) main.style.display = "block";
+        if (loader) loader.style.display = "none";
+        if (main) main.style.display = "block";
+      },
+      (error) => {
+        console.error("Realtime listener error:", error);
+        Swal.fire("Error", "Failed to listen for user data changes.", "error");
+      }
+    );
   });
 };
 
@@ -84,7 +93,7 @@ function updateUI(user, userInfo) {
 }
 
 function monitorUserActivity() {
-  const maxIdleTime = 30 * 60 * 1000; // 15 minutes
+  const maxIdleTime = 15 * 60 * 1000; // 15 minutes
   let idleTimeout;
   let hiddenSince = null;
 

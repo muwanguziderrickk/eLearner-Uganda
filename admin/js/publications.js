@@ -4,6 +4,7 @@ import {
   doc,
   getDoc,
   getDocs,
+  onSnapshot,
   query,
   orderBy,
   limit,
@@ -46,40 +47,61 @@ let currentPage = 1;
 let currentUserRole = "User";
 let currentUserUid = null;
 
-// Fetch the current user's uid (from session manager/Firebase Authentication)
+// Loading Spinner Before displaying publications
+function showLoading() {
+  const loader = document.getElementById("loadingSpinner");
+  if (loader) loader.style.display = "block";
+}
+function hideLoading() {
+  const loader = document.getElementById("loadingSpinner");
+  if (loader) loader.style.display = "none";
+}
+
+// Fetch the current user's uid (from Firebase Authentication)
 function getCurrentUserUid() {
-  const user = getAuth().currentUser; // Assuming you're using Firebase Authentication
+  const user = getAuth().currentUser;
   return user ? user.uid : null;
 }
 
-// Get user role from Firestore
-async function getUserRole(uid) {
-  try {
-    const userDocRef = doc(db, "users", uid);
-    const userSnap = await getDoc(userDocRef);
-    if (userSnap.exists()) {
-      const data = userSnap.data();
-      return data.role || "User"; // fallback to User
-    } else {
-      console.warn("User document not found");
-      return "User";
-    }
-  } catch (err) {
-    console.error("Error getting user role:", err);
-    return "User";
-  }
-}
 
 // Initialization logic for enabling edit/delete based on user roles
 async function init() {
-  getAuth().onAuthStateChanged(async (user) => {
+  getAuth().onAuthStateChanged((user) => {
     if (user) {
       currentUserUid = user.uid;
-      currentUserRole = await getUserRole(currentUserUid);
-      fetchPublications(true); // safe to call here for
+      // 1. Fetch publications ONCE after login
+      fetchPublications(true); // ✅ Safe to call here
+
+      // 2. Listen for role changes in real time
+      onSnapshot(doc(db, "users", currentUserUid), (docSnap) => {
+        if (docSnap.exists()) {
+          currentUserRole = docSnap.data().role;
+          updateEditDeleteVisibilityRoleBased(); // ✅ Adjust buttons live
+        }
+      });
     } else {
       console.warn("No user logged in");
-      // Optionally show login prompt or hide publication list
+    }
+  });
+}
+
+// Function to display edit and delete buttons based on user role change in realtime
+function updateEditDeleteVisibilityRoleBased() {
+  document.querySelectorAll(".publication-item").forEach((item) => {
+    const authorUid = item.getAttribute("data-uid");
+    const editBtn = item.querySelector(".editPublication");
+    const deleteBtn = item.querySelector(".deletePublication");
+
+    const canEditOrDelete =
+      currentUserRole === "Admin" ||
+      (currentUserRole === "Manager" && currentUserUid === authorUid);
+
+    if (canEditOrDelete) {
+      editBtn?.classList.remove("d-none");
+      deleteBtn?.classList.remove("d-none");
+    } else {
+      editBtn?.classList.add("d-none");
+      deleteBtn?.classList.add("d-none");
     }
   });
 }
@@ -91,28 +113,13 @@ function getShortSummary(text) {
   return words.length <= 40 ? text : words.slice(0, 40).join(" ") + "...";
 }
 
-// Search Functionality
-searchInputPublications.addEventListener("input", () => {
-  const searchTerm = searchInputPublications.value.trim().toLowerCase();
-
-  // Filter the publications based on the search term
-  const filteredList = fullList.filter((publication) => {
-    const titleMatch = publication.title.toLowerCase().includes(searchTerm);
-    const authorMatch = publication.author.toLowerCase().includes(searchTerm);
-    const categoryMatch = publication.category
-      .toLowerCase()
-      .includes(searchTerm);
-    const summaryMatch = publication.summary.toLowerCase().includes(searchTerm);
-    return titleMatch || authorMatch || categoryMatch || summaryMatch;
-  });
-
-  // Render the filtered publications
-  renderPublications(filteredList);
-  updatePagination(filteredList);
-});
-
 // Fetch Publications and Render
-async function fetchPublications(reset = false) {
+// Declare unsubscribe function at the top level
+let unsubscribePublications = null;
+
+function fetchPublications(reset = false) {
+  showLoading();
+  if (unsubscribePublications) unsubscribePublications(); // Unsubscribe previous listener
   try {
     if (reset) {
       container.innerHTML = "";
@@ -128,32 +135,32 @@ async function fetchPublications(reset = false) {
       limit(20)
     );
 
-    const snap = await getDocs(q);
-    if (!snap.empty) lastVisible = snap.docs[snap.docs.length - 1];
+    unsubscribePublications = onSnapshot(
+      q,
+      (snapshot) => {
+        if (!snapshot.empty) {
+          lastVisible = snapshot.docs[snapshot.docs.length - 1];
+        }
 
-    fullList = [
-      ...fullList,
-      ...snap.docs.map((doc) => ({ id: doc.id, ...doc.data() })),
-    ];
+        // Update full list
+        fullList = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
 
-    // After fetching, apply search filtering (if there's an active search)
-    const searchTerm = searchInputPublications.value.trim().toLowerCase();
-    const filteredList = fullList.filter((publication) => {
-      const titleMatch = publication.title.toLowerCase().includes(searchTerm);
-      const authorMatch = publication.author.toLowerCase().includes(searchTerm);
-      const categoryMatch = publication.category
-        .toLowerCase()
-        .includes(searchTerm);
-      const summaryMatch = publication.summary
-        .toLowerCase()
-        .includes(searchTerm);
-      return titleMatch || authorMatch || categoryMatch || summaryMatch;
-    });
-
-    renderPublications(filteredList);
-    updatePagination(filteredList);
+        renderPublications(fullList);
+        updatePagination(fullList);
+        // Hide the loading spinner after publications have been rendered
+        hideLoading();
+      },
+      (error) => {
+        console.error("Error fetching publications:", error);
+        hideLoading(); // Hide loading in case of error
+      }
+    );
   } catch (err) {
     console.error("Error fetching publications:", err);
+    hideLoading(); // Hide loading in case of error
   }
 }
 
@@ -164,14 +171,15 @@ function renderPublications(list) {
   const currentSlice = list.slice(start, start + PAGE_SIZE);
 
   currentSlice.forEach((p) => {
-    const canEditOrDelete = currentUserRole === "Admin" || (currentUserRole === "Manager" && currentUserUid === p.uid);  
-
     const item = document.createElement("div");
-    item.className = "publication-ite d-flex mb-4 pb-3 border-bottom";
+    item.className = "publication-item d-flex mb-4 pb-3 border-bottom";
+    item.setAttribute("data-uid", p.uid); // So you can reference it later in updateEditDeleteVisibilityRoleBased() function
 
     item.innerHTML = `
       <div class="flex-shrink-0 me-3">
-        <img src="${p.imageURL || "../../assets/img/digital skills 2.webp"}" class="img-fluid rounded"
+        <img src="${
+          p.imageURL || "../../assets/img/digital skills 2.webp"
+        }" class="img-fluid rounded"
           style="width: 120px; height: 100px; object-fit: cover;" />
       </div>
       <div class="flex-grow-1">
@@ -184,22 +192,21 @@ function renderPublications(list) {
         <h6 class="mb-2">${p.title}</h6>
         <p class="text-muted small">${getShortSummary(p.summary)}</p>
         <div class="d-flex justify-content-between">
-          <button class="btn btn-sm btn-outline-primary read-more-btn me-2" data-id="${p.id}">Read More...</button>
-          ${canEditOrDelete ? `
+            <button class="btn btn-sm btn-outline-primary read-more-btn me-2" data-id="${p.id}">Read More...</button>
             <div>
-              <button class="btn btn-sm btn-outline-info editPublication me-1" data-id="${p.id}">
+              <button class="btn btn-sm btn-outline-info editPublication me-1 d-none" data-id="${p.id}">
                 <i class="fas fa-edit"></i> Edit Post
               </button>
-              <button class="btn btn-sm btn-outline-danger deletePublication me-1" data-id="${p.id}">
+              <button class="btn btn-sm btn-outline-danger deletePublication me-1 d-none" data-id="${p.id}">
                 <i class="fas fa-trash-alt"></i> Delete
               </button>
-            </div>` : ""}
+            </div>
         </div>
       </div>`;
-    
+
     container.appendChild(item);
   });
-
+  updateEditDeleteVisibilityRoleBased(); // Re-check role and toggle buttons
   attachReadMoreHandlers();
 }
 
@@ -211,7 +218,8 @@ function attachReadMoreHandlers() {
       if (snap.exists()) {
         const d = snap.data();
         readMoreTitle.textContent = d.title;
-        readMoreImage.src = d.imageURL || "../../assets/img/digital skills 2.webp";
+        readMoreImage.src =
+          d.imageURL || "../../assets/img/digital skills 2.webp";
         readMoreCategory.textContent = d.category;
         readMoreAuthor.textContent = d.author;
         readMoreDate.textContent = new Date(
@@ -223,6 +231,46 @@ function attachReadMoreHandlers() {
     });
   });
 }
+
+// Search Functionality
+let debounceTimeout;
+// Search Functionality with a debounce
+searchInputPublications.addEventListener("input", () => {
+  clearTimeout(debounceTimeout); // Clear previous timeout
+
+  debounceTimeout = setTimeout(() => {
+    const searchTerm = searchInputPublications.value.trim().toLowerCase();
+
+    // Filter the publications based on the search term
+    const filteredList = fullList.filter((publication) => {
+      const titleMatch = publication.title.toLowerCase().includes(searchTerm);
+      const authorMatch = publication.author.toLowerCase().includes(searchTerm);
+      const categoryMatch = publication.category
+        .toLowerCase()
+        .includes(searchTerm);
+      const summaryMatch = publication.summary
+        .toLowerCase()
+        .includes(searchTerm);
+      return titleMatch || authorMatch || categoryMatch || summaryMatch;
+    });
+
+    // Render the filtered publications
+    renderPublications(filteredList);
+    updatePagination(filteredList);
+
+    // Display "No results found" if list is empty
+    if (filteredList.length === 0) {
+      const container = document.getElementById("publicationsContainer");
+      container.innerHTML = `
+        <div class="d-flex justify-content-center">
+          <div class="alert alert-warning text-center col-lg-8">
+            No results found for "<strong>${searchTerm}</strong>".
+          </div>
+        </div>
+      `;
+    }
+  }, 300); // 300ms debounce delay
+});
 
 // Pagination Update
 function updatePagination(filteredList) {
@@ -263,7 +311,6 @@ function updatePagination(filteredList) {
   });
 }
 
-
 // Add or Update Publication
 async function uploadImageToFirebaseStorage(file) {
   const imageRef = ref(
@@ -299,7 +346,16 @@ document
     const publicationId = document.getElementById("publicationId").value.trim();
 
     let imageURL = "";
-    const uid = getCurrentUserUid(); // Get the uid of the current user
+    // ✅ Preserve original UID if editing
+    let uid = getCurrentUserUid(); // Default to current user
+    if (publicationId) {
+      const existingDoc = await getDoc(doc(db, "publications", publicationId));
+      if (existingDoc.exists()) {
+        const oldData = existingDoc.data();
+        uid = oldData.uid || uid; // Preserve original UID if exists
+      }
+    }
+    
 
     if (imageFile) {
       if (imageFile.size > 5 * 1024 * 1024) {
@@ -329,7 +385,8 @@ document
       category,
       imageURL,
       summary,
-      uid, // Store the uid of the signed-in user
+      uid, // Store the uid of the original uploader
+      lastEditedBy: getCurrentUserUid(),
       dateModified: serverTimestamp(),
     };
 
@@ -339,13 +396,13 @@ document
           doc(db, "publications", publicationId),
           publicationData
         );
-        Swal.fire("Updated!", "Publication has been updated.", "success");
+        Swal.fire("Updated Successfully!", "Your publication has been updated.", "success");
       } else {
         await addDoc(collection(db, "publications"), {
           ...publicationData,
           dateCreated: serverTimestamp(),
         });
-        Swal.fire("Added!", "Publication has been added.", "success");
+        Swal.fire("Added Successfully!", "Your publication has been posted.", "success");
       }
 
       if (isSavingCancelled) return;
@@ -353,7 +410,7 @@ document
       bootstrap.Modal.getInstance(
         document.getElementById("publicationModal")
       ).hide();
-      fetchPublications(true);
+      // fetchPublications(true);
       document.getElementById("publicationsForm").reset();
       document.getElementById("publicationId").value = "";
     } catch (error) {
@@ -441,7 +498,7 @@ document.addEventListener("click", async (e) => {
 
         await deleteDoc(doc(db, "publications", id));
         Swal.fire("Deleted!", "The publication was deleted.", "success");
-        fetchPublications(true);
+        // fetchPublications(true);
       } catch (err) {
         console.error("Error deleting publication:", err);
         Swal.fire("Error", "Failed to delete publication.", "error");

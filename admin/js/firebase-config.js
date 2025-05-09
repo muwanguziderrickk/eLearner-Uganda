@@ -4,7 +4,7 @@ import { firebaseConfig } from "./firebase-secret.js";
 
 import {
   getFirestore, collection, getDoc, getDocs, addDoc, updateDoc, deleteDoc,
-  doc, setDoc, query, orderBy, limit, startAfter, serverTimestamp,
+  doc, setDoc, query, orderBy, limit, startAfter, serverTimestamp, onSnapshot
 } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
 import {
@@ -23,6 +23,6 @@ const auth = getAuth(app);
 export {
   db, storage, collection, getDoc, getDocs, addDoc, updateDoc, deleteDoc,
   doc, ref, uploadBytes, getDownloadURL, deleteObject,
-  setDoc, query, orderBy, limit, startAfter, serverTimestamp,
+  setDoc, query, orderBy, limit, startAfter, serverTimestamp, onSnapshot,
   getAuth, createUserWithEmailAndPassword, fetchSignInMethodsForEmail, signInWithEmailAndPassword, onAuthStateChanged, signOut, sendPasswordResetEmail
 };
