@@ -363,6 +363,11 @@ input {
   padding-bottom: 20px;
 }
 
+.default-padding-dsf {
+  padding-top: 60px;
+  padding-bottom: 20px;
+}
+
 .default-padding-top {
   padding-top: 120px;
 }
