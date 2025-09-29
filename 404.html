@@ -56,6 +56,36 @@
                         <div class="error-box">
                             <!-- <h2>Oops! Site Under Development.</h2> -->
                             <h2>Oops! Coming Soon.</h2>
+                            <h3 id="countdown"></h3>
+                            <script>
+                                const countdownEl = document.getElementById("countdown");
+
+                                // Set a fixed end date (example: 2 days from deploy time)
+                                // Change this to your real deploy start date + 2 days
+                                const endTime = new Date("2025-10-01T00:00:00").getTime(); // YYYY-MM-DDTHH:mm:ss
+
+                                function updateCountdown() {
+                                    const now = Date.now();
+                                    const diff = endTime - now;
+
+                                    if (diff <= 0) {
+                                    countdownEl.textContent = "uploading...";
+                                    clearInterval(timer);
+                                    return;
+                                    }
+
+                                    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                                    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+                                    const minutes = Math.floor((diff / (1000 * 60)) % 60);
+                                    const seconds = Math.floor((diff / 1000) % 60);
+
+                                    countdownEl.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+                                }
+
+                                updateCountdown();
+                                const timer = setInterval(updateCountdown, 1000);
+                            </script>
+
                             <p>
                                 Let’s get you back on track. Click below to go to the homepage!
                             </p>
